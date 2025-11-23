@@ -1,5 +1,5 @@
 {
-  "name": "e-POS",
+  "name": "POSai",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
