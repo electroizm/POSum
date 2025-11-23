@@ -1,5 +1,5 @@
 {
-  "name": "POSai",
+  "name": "POSum",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
