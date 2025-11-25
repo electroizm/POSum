@@ -13,7 +13,9 @@
     "noData": "Veri bulunamadı",
     "error": "Bir hata oluştu",
     "success": "İşlem başarılı",
-    "close": "Kapat"
+    "close": "Kapat",
+    "open": "Aç",
+    "menu": "Menü"
   },
   "nav": {
     "dashboard": "Kontrol Paneli",

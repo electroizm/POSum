@@ -57,6 +57,9 @@ export default function Layout({ children }: LayoutProps) {
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
+              aria-label={sidebarOpen ? `${t('common.close')} ${t('common.menu')}` : `${t('common.open')} ${t('common.menu')}`}
+              aria-expanded={sidebarOpen}
+              aria-controls="sidebar-navigation"
             >
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -85,6 +88,9 @@ export default function Layout({ children }: LayoutProps) {
                 onClick={() => setLanguageMenuOpen(!languageMenuOpen)}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[44px]"
                 title={t('settings.language')}
+                aria-label={`${t('settings.language')}: ${i18n.language === 'tr' ? 'Türkçe' : 'English'}`}
+                aria-expanded={languageMenuOpen}
+                aria-haspopup="true"
               >
                 <Globe size={20} className="text-gray-600" />
                 <span className="text-sm font-medium text-gray-700 uppercase hidden sm:inline">
@@ -98,6 +104,9 @@ export default function Layout({ children }: LayoutProps) {
                     className={`w-full text-left px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors min-h-[44px] ${
                       i18n.language === 'tr' ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-700'
                     }`}
+                    aria-label="Türkçe dili seç"
+                    aria-current={i18n.language === 'tr' ? 'true' : undefined}
+                    role="menuitem"
                   >
                     🇹🇷 Türkçe
                   </button>
@@ -106,6 +115,9 @@ export default function Layout({ children }: LayoutProps) {
                     className={`w-full text-left px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors min-h-[44px] ${
                       i18n.language === 'en' ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-700'
                     }`}
+                    aria-label="Select English language"
+                    aria-current={i18n.language === 'en' ? 'true' : undefined}
+                    role="menuitem"
                   >
                     🇬🇧 English
                   </button>
@@ -117,12 +129,16 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Sidebar */}
-      <aside className={`
-        fixed top-14 left-0 bottom-0 w-64 bg-white border-r border-gray-200
-        transform transition-transform duration-200 ease-in-out z-40
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0
-      `}>
+      <aside
+        id="sidebar-navigation"
+        className={`
+          fixed top-14 left-0 bottom-0 w-64 bg-white border-r border-gray-200
+          transform transition-transform duration-200 ease-in-out z-40
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0
+        `}
+        aria-label="Main navigation"
+      >
         <nav className="p-4 space-y-1">
           {menuItems.map(item => {
             const Icon = item.icon;
@@ -139,6 +155,8 @@ export default function Layout({ children }: LayoutProps) {
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }
                 `}
+                aria-label={item.label}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <Icon size={20} />
                 <span>{item.label}</span>

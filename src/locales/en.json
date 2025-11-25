@@ -13,7 +13,9 @@
     "noData": "No data found",
     "error": "An error occurred",
     "success": "Operation successful",
-    "close": "Close"
+    "close": "Close",
+    "open": "Open",
+    "menu": "Menu"
   },
   "nav": {
     "dashboard": "Dashboard",
