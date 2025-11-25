@@ -8,8 +8,10 @@ import { useApp, useFilteredTransactions } from '../contexts/AppContext';
 import { formatCurrency, formatDate } from '../services/calculationEngine';
 import { Transaction, CardType } from '../types';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
-export default function TransactionsPage() {
+const TransactionsPage = React.memo(function TransactionsPage() {
+  const { t } = useTranslation();
   const { state, dispatch } = useApp();
   const transactions = useFilteredTransactions();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -26,7 +28,7 @@ export default function TransactionsPage() {
     authCode: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = React.useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
     const pos = state.posDevices.find(p => p.id === formData.posId);
@@ -63,7 +65,7 @@ export default function TransactionsPage() {
       payload: {
         id: `notif-${Date.now()}`,
         type: 'success',
-        message: 'İşlem başarıyla eklendi!'
+        message: t('transactions.addForm.successMessage')
       }
     });
   };
@@ -84,82 +86,82 @@ export default function TransactionsPage() {
       {/* Başlık ve Aksiyonlar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">İşlemler</h2>
-          <p className="text-gray-500 mt-1">Tüm POS işlemlerinizi görüntüleyin ve yönetin</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('transactions.title')}</h2>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">{t('transactions.subtitle')}</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
         >
           <Plus size={20} />
-          Yeni İşlem Ekle
+          {t('transactions.addTransaction')}
         </button>
       </div>
 
       {/* Arama ve Filtre */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={20} />
           <input
             type="text"
-            placeholder="Banka, kart no veya onay kodu ile ara..."
+            placeholder={t('transactions.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
           />
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300">
           <Filter size={20} />
-          Filtrele
+          {t('common.filter')}
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300">
           <Download size={20} />
-          Dışa Aktar
+          {t('common.export')}
         </button>
       </div>
 
       {/* İşlem Listesi */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Tarih</th>
-                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Banka / POS</th>
-                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Kart</th>
-                <th className="text-center py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Taksit</th>
-                <th className="text-right py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Brüt</th>
-                <th className="text-right py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Komisyon</th>
-                <th className="text-right py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Net</th>
-                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Valör</th>
-                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 uppercase">Durum</th>
+                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.date')}</th>
+                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.bankPos')}</th>
+                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.card')}</th>
+                <th className="text-center py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.installment')}</th>
+                <th className="text-right py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.gross')}</th>
+                <th className="text-right py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.commission')}</th>
+                <th className="text-right py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.net')}</th>
+                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.valueDate')}</th>
+                <th className="text-left py-4 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{t('transactions.tableHeaders.status')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {filteredTransactions.map(txn => {
                 const bank = state.banks.find(b => b.id === txn.bankId);
                 const pos = state.posDevices.find(p => p.id === txn.posId);
                 return (
-                  <tr key={txn.id} className="hover:bg-gray-50">
-                    <td className="py-4 px-4 text-sm text-gray-600">
+                  <tr key={txn.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="py-4 px-4 text-sm text-gray-600 dark:text-gray-400">
                       {format(new Date(txn.date), 'dd.MM.yyyy HH:mm')}
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{bank?.logo}</span>
                         <div>
-                          <p className="text-sm font-medium text-gray-700">{bank?.name}</p>
-                          <p className="text-xs text-gray-400">{pos?.terminalNo}</p>
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{bank?.name}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500">{pos?.terminalNo}</p>
                         </div>
                       </div>
                     </td>
                     <td className="py-4 px-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          {txn.cardType === 'bireysel' ? 'Bireysel' : 'Ticari'}
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {txn.cardType === 'bireysel' ? t('transactions.personal') : t('transactions.commercial')}
                         </p>
                         {txn.cardLastFour && (
-                          <p className="text-xs text-gray-400">****{txn.cardLastFour}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500">****{txn.cardLastFour}</p>
                         )}
                       </div>
                     </td>
@@ -167,37 +169,37 @@ export default function TransactionsPage() {
                       <span className={`
                         inline-flex px-2 py-1 text-xs font-medium rounded
                         ${txn.installmentCount === 1
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-blue-100 text-blue-700'}
+                          ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+                          : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'}
                       `}>
-                        {txn.installmentCount === 1 ? 'Tek' : `${txn.installmentCount}T`}
+                        {txn.installmentCount === 1 ? t('transactions.installmentTypes.single') : t('transactions.installmentTypes.count', { count: txn.installmentCount })}
                       </span>
                     </td>
-                    <td className="py-4 px-4 text-sm text-right font-medium text-gray-900">
+                    <td className="py-4 px-4 text-sm text-right font-medium text-gray-900 dark:text-white">
                       {formatCurrency(txn.grossAmount)}
                     </td>
                     <td className="py-4 px-4 text-sm text-right">
                       <div>
-                        <p className="text-red-600">-{formatCurrency(txn.commissionAmount || 0)}</p>
-                        <p className="text-xs text-gray-400">%{txn.commissionRate?.toFixed(2)}</p>
+                        <p className="text-red-600 dark:text-red-400">-{formatCurrency(txn.commissionAmount || 0)}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">%{txn.commissionRate?.toFixed(2)}</p>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-sm text-right font-medium text-green-600">
+                    <td className="py-4 px-4 text-sm text-right font-medium text-green-600 dark:text-green-400">
                       {formatCurrency(txn.finalAmount || 0)}
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-600">
+                    <td className="py-4 px-4 text-sm text-gray-600 dark:text-gray-400">
                       {txn.valueDate && formatDate(txn.valueDate)}
                     </td>
                     <td className="py-4 px-4">
                       <span className={`
                         inline-flex px-2 py-1 text-xs font-medium rounded-full
-                        ${txn.status === 'beklemede' ? 'bg-yellow-100 text-yellow-700' : ''}
-                        ${txn.status === 'islendi' ? 'bg-blue-100 text-blue-700' : ''}
-                        ${txn.status === 'transfer_edildi' ? 'bg-green-100 text-green-700' : ''}
+                        ${txn.status === 'beklemede' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300' : ''}
+                        ${txn.status === 'islendi' ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : ''}
+                        ${txn.status === 'transfer_edildi' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : ''}
                       `}>
-                        {txn.status === 'beklemede' && 'Beklemede'}
-                        {txn.status === 'islendi' && 'İşlendi'}
-                        {txn.status === 'transfer_edildi' && 'Transfer Edildi'}
+                        {txn.status === 'beklemede' && t('dashboard.pending')}
+                        {txn.status === 'islendi' && t('dashboard.processed')}
+                        {txn.status === 'transfer_edildi' && t('dashboard.transferred')}
                       </span>
                     </td>
                   </tr>
@@ -209,38 +211,38 @@ export default function TransactionsPage() {
 
         {filteredTransactions.length === 0 && (
           <div className="text-center py-12">
-            <CreditCard className="mx-auto text-gray-300" size={48} />
-            <p className="mt-4 text-gray-500">Henüz işlem bulunmuyor</p>
+            <CreditCard className="mx-auto text-gray-300 dark:text-gray-600" size={48} />
+            <p className="mt-4 text-gray-500 dark:text-gray-400">{t('transactions.noTransactions')}</p>
           </div>
         )}
       </div>
 
       {/* İşlem Ekleme Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900">Yeni İşlem Ekle</h3>
-              <p className="text-sm text-gray-500 mt-1">Manuel işlem girişi (OCR simülasyonu)</p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('transactions.addForm.title')}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('transactions.addForm.subtitle')}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tarih
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('transactions.addForm.date')}
                   </label>
                   <input
                     type="date"
                     value={formData.date}
                     onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tutar (TL)
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('transactions.addForm.amount')}
                   </label>
                   <input
                     type="number"
@@ -248,20 +250,20 @@ export default function TransactionsPage() {
                     value={formData.grossAmount}
                     onChange={(e) => setFormData({...formData, grossAmount: e.target.value})}
                     placeholder="0.00"
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  POS Cihazı
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {t('transactions.addForm.posDevice')}
                 </label>
                 <select
                   value={formData.posId}
                   onChange={(e) => setFormData({...formData, posId: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   required
                 >
                   {state.posDevices.map(pos => {
@@ -277,41 +279,41 @@ export default function TransactionsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Kart Tipi
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('transactions.tableHeaders.card')}
                   </label>
                   <select
                     value={formData.cardType}
                     onChange={(e) => setFormData({...formData, cardType: e.target.value as CardType})}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
-                    <option value="bireysel">Bireysel</option>
-                    <option value="ticari">Ticari / Kurumsal</option>
+                    <option value="bireysel">{t('transactions.personal')}</option>
+                    <option value="ticari">{t('transactions.commercialFull')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Taksit
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('transactions.tableHeaders.installment')}
                   </label>
                   <select
                     value={formData.installmentCount}
                     onChange={(e) => setFormData({...formData, installmentCount: parseInt(e.target.value)})}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
-                    <option value={1}>Tek Çekim</option>
-                    <option value={2}>2 Taksit</option>
-                    <option value={3}>3 Taksit</option>
-                    <option value={6}>6 Taksit</option>
-                    <option value={9}>9 Taksit</option>
-                    <option value={12}>12 Taksit</option>
+                    <option value={1}>{t('transactions.addForm.singlePayment')}</option>
+                    <option value={2}>2 {t('transactions.tableHeaders.installment')}</option>
+                    <option value={3}>3 {t('transactions.tableHeaders.installment')}</option>
+                    <option value={6}>6 {t('transactions.tableHeaders.installment')}</option>
+                    <option value={9}>9 {t('transactions.tableHeaders.installment')}</option>
+                    <option value={12}>12 {t('transactions.tableHeaders.installment')}</option>
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Kart Son 4 Hane
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('transactions.addForm.cardLastFour')}
                   </label>
                   <input
                     type="text"
@@ -319,19 +321,19 @@ export default function TransactionsPage() {
                     value={formData.cardLastFour}
                     onChange={(e) => setFormData({...formData, cardLastFour: e.target.value})}
                     placeholder="1234"
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Onay Kodu
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('transactions.addForm.authCode')}
                   </label>
                   <input
                     type="text"
                     value={formData.authCode}
                     onChange={(e) => setFormData({...formData, authCode: e.target.value})}
                     placeholder="123456"
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   />
                 </div>
               </div>
@@ -340,15 +342,15 @@ export default function TransactionsPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddForm(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
-                  İptal
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
                 >
-                  İşlemi Kaydet
+                  {t('transactions.addForm.saveTransaction')}
                 </button>
               </div>
             </form>

@@ -20,11 +20,11 @@ import { format } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 
-export default function Dashboard() {
+const Dashboard = React.memo(function Dashboard() {
   const { state } = useApp();
   const { t, i18n } = useTranslation();
   const transactions = useFilteredTransactions();
-  const locale = i18n.language === 'tr' ? tr : enUS;
+  const locale = React.useMemo(() => i18n.language === 'tr' ? tr : enUS, [i18n.language]);
 
   // Toplam hesaplamalar
   const totals = React.useMemo(() => {
@@ -70,7 +70,7 @@ export default function Dashboard() {
       });
     }
     return last7Days;
-  }, [transactions]);
+  }, [transactions, locale]);
 
   // Nakit akışı tahmini
   const cashFlow = React.useMemo(() => {
@@ -327,4 +327,6 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
+});
+
+export default Dashboard;

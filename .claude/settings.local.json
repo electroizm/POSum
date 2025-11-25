@@ -1,10 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit:*)",
-      "Bash(git remote set-url:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add i18n, PWA & Mobile Optimization\n\nMajor Features:\n- 🌍 Multi-language support (Turkish & English) with react-i18next\n- 📱 Mobile-first responsive design with card views\n- 🚀 Progressive Web App (PWA) configuration\n- 👆 Touch-friendly UI with 44x44px minimum touch targets\n- 🎨 Enhanced mobile UX with smooth animations\n\nChanges:\n- Add i18n configuration with TR/EN language files\n- Add language switcher in header with globe icon\n- Convert Dashboard tables to mobile card views on small screens\n- Optimize charts for mobile (increased height, responsive padding)\n- Add PWA manifest and service worker configuration\n- Implement touch-friendly styles and safe area insets\n- Add comprehensive PWA_GUIDE.md documentation\n- Update .gitignore to exclude dev-dist and .claude folders\n\nMobile Improvements:\n- Responsive grid system (4 cols → 1 col on mobile)\n- Touch feedback with active states\n- Optimized font sizes for mobile\n- Sidebar hamburger menu with smooth transitions\n- Header title abbreviation on mobile (POSum)\n\nPWA Features:\n- Offline support with service worker\n- Installable on mobile devices\n- Auto-update capability\n- Cache strategy for static assets\n- iOS and Android meta tags\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git remote add:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(node generate-icons.js:*)",
+      "Bash(cat:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

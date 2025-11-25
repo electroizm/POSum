@@ -1,7 +1,36 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" class="light">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Dark Mode Flash Prevention -->
+    <script>
+      (function() {
+        try {
+          const theme = localStorage.getItem('posum_theme') || 'light';
+          const root = document.documentElement;
+
+          if (theme === 'auto') {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+              root.classList.remove('light');
+              root.classList.add('dark');
+            } else {
+              root.classList.remove('dark');
+              root.classList.add('light');
+            }
+          } else if (theme === 'dark') {
+            root.classList.remove('light');
+            root.classList.add('dark');
+          } else {
+            root.classList.remove('dark');
+            root.classList.add('light');
+          }
+        } catch (e) {
+          console.error('Error loading theme:', e);
+        }
+      })();
+    </script>
 
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
@@ -14,8 +43,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="POSum" />
 
-    <!-- Theme Colors -->
-    <meta name="theme-color" content="#3b82f6" />
+    <!-- Theme Colors (Light/Dark) -->
+    <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1e293b" media="(prefers-color-scheme: dark)" />
     <meta name="msapplication-TileColor" content="#3b82f6" />
 
     <!-- SEO & Description -->

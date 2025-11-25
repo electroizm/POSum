@@ -25,7 +25,7 @@ const colorClasses = {
   purple: 'bg-purple-50 text-purple-600',
 };
 
-export default function StatCard({
+const StatCard = React.memo(function StatCard({
   title,
   value,
   subtitle,
@@ -65,4 +65,6 @@ export default function StatCard({
       )}
     </div>
   );
-}
+});
+
+export default StatCard;

@@ -63,17 +63,44 @@
     "title": "İşlemler",
     "subtitle": "Tüm POS işlemlerinizi görüntüleyin ve yönetin",
     "addTransaction": "Yeni İşlem Ekle",
-    "searchPlaceholder": "Banka, kart, yetki kodu ile ara...",
+    "searchPlaceholder": "Banka, kart no veya onay kodu ile ara...",
     "allBanks": "Tüm Bankalar",
     "allStatuses": "Tüm Durumlar",
     "cardNumber": "Kart Numarası",
+    "cardLastFour": "Kart Son 4 Hane",
     "authCode": "Yetki Kodu",
     "installments": "Taksit",
     "cardType": "Kart Tipi",
     "personal": "Bireysel",
     "commercial": "Ticari",
+    "commercialFull": "Ticari / Kurumsal",
     "actions": "İşlemler",
-    "noTransactions": "Henüz işlem bulunmuyor"
+    "noTransactions": "Henüz işlem bulunmuyor",
+    "tableHeaders": {
+      "date": "Tarih",
+      "bankPos": "Banka / POS",
+      "card": "Kart",
+      "installment": "Taksit",
+      "gross": "Brüt",
+      "commission": "Komisyon",
+      "net": "Net",
+      "valueDate": "Valör",
+      "status": "Durum"
+    },
+    "installmentTypes": {
+      "single": "Tek",
+      "count": "T"
+    },
+    "addForm": {
+      "title": "Yeni İşlem Ekle",
+      "subtitle": "Manuel işlem girişi (OCR simülasyonu)",
+      "date": "Tarih",
+      "amount": "Tutar (TL)",
+      "posDevice": "POS Cihazı",
+      "singlePayment": "Tek Çekim",
+      "saveTransaction": "İşlemi Kaydet",
+      "successMessage": "İşlem başarıyla eklendi!"
+    }
   },
   "banks": {
     "title": "Bankalar & Komisyon Matrisi",
@@ -129,12 +156,32 @@
     "dark": "Koyu",
     "auto": "Otomatik"
   },
+  "theme": {
+    "light": "Açık Tema",
+    "dark": "Koyu Tema",
+    "auto": "Otomatik (Sistem)",
+    "toggle": "Tema Değiştir",
+    "current": "Mevcut tema"
+  },
   "errors": {
     "required": "Bu alan zorunludur",
     "invalidEmail": "Geçersiz e-posta adresi",
     "invalidAmount": "Geçersiz tutar",
     "networkError": "Bağlantı hatası",
     "serverError": "Sunucu hatası",
-    "notFound": "Bulunamadı"
+    "notFound": "Bulunamadı",
+    "boundary": {
+      "title": "Bir hata oluştu",
+      "message": "Üzgünüz, bir şeyler yanlış gitti.",
+      "reload": "Sayfayı Yenile",
+      "report": "Hatayı Bildir",
+      "description": "Hata detayları panoya kopyalandı. Lütfen teknik destek ekibiyle paylaşın."
+    }
+  },
+  "notifications": {
+    "success": "Başarılı",
+    "error": "Hata",
+    "info": "Bilgi",
+    "warning": "Uyarı"
   }
 }

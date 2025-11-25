@@ -63,17 +63,44 @@
     "title": "Transactions",
     "subtitle": "View and manage all your POS transactions",
     "addTransaction": "Add New Transaction",
-    "searchPlaceholder": "Search by bank, card, auth code...",
+    "searchPlaceholder": "Search by bank, card, or auth code...",
     "allBanks": "All Banks",
     "allStatuses": "All Statuses",
     "cardNumber": "Card Number",
+    "cardLastFour": "Card Last 4 Digits",
     "authCode": "Auth Code",
     "installments": "Installments",
     "cardType": "Card Type",
     "personal": "Personal",
     "commercial": "Commercial",
+    "commercialFull": "Commercial / Corporate",
     "actions": "Actions",
-    "noTransactions": "No transactions yet"
+    "noTransactions": "No transactions yet",
+    "tableHeaders": {
+      "date": "Date",
+      "bankPos": "Bank / POS",
+      "card": "Card",
+      "installment": "Installment",
+      "gross": "Gross",
+      "commission": "Commission",
+      "net": "Net",
+      "valueDate": "Value Date",
+      "status": "Status"
+    },
+    "installmentTypes": {
+      "single": "Single",
+      "count": "I"
+    },
+    "addForm": {
+      "title": "Add New Transaction",
+      "subtitle": "Manual transaction entry (OCR simulation)",
+      "date": "Date",
+      "amount": "Amount (TRY)",
+      "posDevice": "POS Device",
+      "singlePayment": "Single Payment",
+      "saveTransaction": "Save Transaction",
+      "successMessage": "Transaction added successfully!"
+    }
   },
   "banks": {
     "title": "Banks & Commission Matrix",
@@ -129,12 +156,32 @@
     "dark": "Dark",
     "auto": "Auto"
   },
+  "theme": {
+    "light": "Light Theme",
+    "dark": "Dark Theme",
+    "auto": "Auto (System)",
+    "toggle": "Toggle theme",
+    "current": "Current theme"
+  },
   "errors": {
     "required": "This field is required",
     "invalidEmail": "Invalid email address",
     "invalidAmount": "Invalid amount",
     "networkError": "Connection error",
     "serverError": "Server error",
-    "notFound": "Not found"
+    "notFound": "Not found",
+    "boundary": {
+      "title": "An error occurred",
+      "message": "Sorry, something went wrong.",
+      "reload": "Reload Page",
+      "report": "Report Error",
+      "description": "Error details copied to clipboard. Please share with technical support team."
+    }
+  },
+  "notifications": {
+    "success": "Success",
+    "error": "Error",
+    "info": "Info",
+    "warning": "Warning"
   }
 }

@@ -2,7 +2,7 @@
 // UYGULAMA STATE YÖNETİMİ - CONTEXT API
 // ===========================================
 
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import {
   Bank, Branch, POSDevice, CommissionRate, Transaction,
   FilterOptions, CardType
@@ -12,6 +12,7 @@ import {
   mockCommissionRates, mockTransactions
 } from '../data/mockData';
 import { calculateBatchTransactions } from '../services/calculationEngine';
+import { ThemeMode, loadTheme, saveTheme, applyTheme } from '../utils/storage';
 
 // State Tipi
 interface AppState {
@@ -24,6 +25,7 @@ interface AppState {
   activeView: 'dashboard' | 'transactions' | 'banks' | 'simulation' | 'reports' | 'settings';
   isLoading: boolean;
   notifications: { id: string; type: 'success' | 'error' | 'info'; message: string }[];
+  theme: ThemeMode;
 }
 
 // Action Tipleri
@@ -46,7 +48,8 @@ type AppAction =
   | { type: 'SET_ACTIVE_VIEW'; payload: AppState['activeView'] }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'ADD_NOTIFICATION'; payload: AppState['notifications'][0] }
-  | { type: 'REMOVE_NOTIFICATION'; payload: string };
+  | { type: 'REMOVE_NOTIFICATION'; payload: string }
+  | { type: 'SET_THEME'; payload: ThemeMode };
 
 // Başlangıç State'i
 const initialState: AppState = {
@@ -58,7 +61,8 @@ const initialState: AppState = {
   filters: {},
   activeView: 'dashboard',
   isLoading: false,
-  notifications: []
+  notifications: [],
+  theme: loadTheme()
 };
 
 // Reducer
@@ -160,6 +164,14 @@ function appReducer(state: AppState, action: AppAction): AppState {
         notifications: state.notifications.filter(n => n.id !== action.payload)
       };
 
+    case 'SET_THEME':
+      saveTheme(action.payload);
+      applyTheme(action.payload);
+      return {
+        ...state,
+        theme: action.payload
+      };
+
     default:
       return state;
   }
@@ -175,8 +187,27 @@ const AppContext = createContext<{
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
+  // Apply theme on mount and listen for system theme changes
+  useEffect(() => {
+    applyTheme(state.theme);
+
+    // Listen for system theme changes when in auto mode
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      if (state.theme === 'auto') {
+        applyTheme('auto');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [state.theme]);
+
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = React.useMemo(() => ({ state, dispatch }), [state, dispatch]);
+
   return (
-    <AppContext.Provider value={{ state, dispatch }}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );
@@ -196,30 +227,32 @@ export function useFilteredTransactions() {
   const { state } = useApp();
   const { transactions, filters } = state;
 
-  return transactions.filter(txn => {
-    if (filters.dateFrom && new Date(txn.date) < filters.dateFrom) return false;
-    if (filters.dateTo && new Date(txn.date) > filters.dateTo) return false;
-    if (filters.bankIds?.length && !filters.bankIds.includes(txn.bankId)) return false;
-    if (filters.branchIds?.length && !filters.branchIds.includes(txn.branchId)) return false;
-    if (filters.posIds?.length && !filters.posIds.includes(txn.posId)) return false;
-    if (filters.cardTypes?.length && !filters.cardTypes.includes(txn.cardType)) return false;
-    if (filters.minAmount && txn.grossAmount < filters.minAmount) return false;
-    if (filters.maxAmount && txn.grossAmount > filters.maxAmount) return false;
-    return true;
-  });
+  return React.useMemo(() => {
+    return transactions.filter(txn => {
+      if (filters.dateFrom && new Date(txn.date) < filters.dateFrom) return false;
+      if (filters.dateTo && new Date(txn.date) > filters.dateTo) return false;
+      if (filters.bankIds?.length && !filters.bankIds.includes(txn.bankId)) return false;
+      if (filters.branchIds?.length && !filters.branchIds.includes(txn.branchId)) return false;
+      if (filters.posIds?.length && !filters.posIds.includes(txn.posId)) return false;
+      if (filters.cardTypes?.length && !filters.cardTypes.includes(txn.cardType)) return false;
+      if (filters.minAmount && txn.grossAmount < filters.minAmount) return false;
+      if (filters.maxAmount && txn.grossAmount > filters.maxAmount) return false;
+      return true;
+    });
+  }, [transactions, filters]);
 }
 
 export function useBankById(bankId: string) {
   const { state } = useApp();
-  return state.banks.find(b => b.id === bankId);
+  return React.useMemo(() => state.banks.find(b => b.id === bankId), [state.banks, bankId]);
 }
 
 export function usePOSById(posId: string) {
   const { state } = useApp();
-  return state.posDevices.find(p => p.id === posId);
+  return React.useMemo(() => state.posDevices.find(p => p.id === posId), [state.posDevices, posId]);
 }
 
 export function useBranchById(branchId: string) {
   const { state } = useApp();
-  return state.branches.find(b => b.id === branchId);
+  return React.useMemo(() => state.branches.find(b => b.id === branchId), [state.branches, branchId]);
 }

@@ -2,15 +2,18 @@
 // ANA UYGULAMA BİLEŞENİ
 // ===========================================
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { AppProvider, useApp } from './contexts/AppContext';
 import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import TransactionsPage from './pages/TransactionsPage';
-import BanksPage from './pages/BanksPage';
-import SimulationPage from './pages/SimulationPage';
-import ReportsPage from './pages/ReportsPage';
-import SettingsPage from './pages/SettingsPage';
+import Loading from './components/Loading';
+
+// Lazy load all page components for better performance
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const TransactionsPage = lazy(() => import('./pages/TransactionsPage'));
+const BanksPage = lazy(() => import('./pages/BanksPage'));
+const SimulationPage = lazy(() => import('./pages/SimulationPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 
 // Sayfa Yönlendiricisi
 function PageRouter() {
@@ -39,7 +42,9 @@ function App() {
   return (
     <AppProvider>
       <Layout>
-        <PageRouter />
+        <Suspense fallback={<Loading message="Sayfa yukleniyor" />}>
+          <PageRouter />
+        </Suspense>
       </Layout>
     </AppProvider>
   );

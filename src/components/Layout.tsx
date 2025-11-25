@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import ThemeToggle from './ThemeToggle';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -49,32 +50,32 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50 transition-colors">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden transition-colors"
               aria-label={sidebarOpen ? `${t('common.close')} ${t('common.menu')}` : `${t('common.open')} ${t('common.menu')}`}
               aria-expanded={sidebarOpen}
               aria-controls="sidebar-navigation"
             >
-              {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+              {sidebarOpen ? <X size={20} className="text-gray-700 dark:text-gray-300" /> : <Menu size={20} className="text-gray-700 dark:text-gray-300" />}
             </button>
             <div className="flex items-center gap-2">
-              <CreditCard className="text-primary-600" size={28} />
-              <h1 className="text-xl font-bold text-gray-800 hidden sm:block">
+              <CreditCard className="text-primary-600 dark:text-primary-400" size={28} />
+              <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 hidden sm:block">
                 {t('header.title')}
               </h1>
-              <h1 className="text-lg font-bold text-gray-800 sm:hidden">
+              <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100 sm:hidden">
                 POSum
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-sm text-gray-500 hidden md:block">
+          <div className="flex items-center gap-2">
+            <div className="text-sm text-gray-500 dark:text-gray-400 hidden md:block">
               {new Date().toLocaleDateString(i18n.language === 'tr' ? 'tr-TR' : 'en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -82,27 +83,29 @@ export default function Layout({ children }: LayoutProps) {
                 day: 'numeric'
               })}
             </div>
+            {/* Theme Toggle */}
+            <ThemeToggle />
             {/* Dil Seçici */}
             <div className="relative" ref={languageMenuRef}>
               <button
                 onClick={() => setLanguageMenuOpen(!languageMenuOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[44px]"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 transition-colors min-h-[44px]"
                 title={t('settings.language')}
                 aria-label={`${t('settings.language')}: ${i18n.language === 'tr' ? 'Türkçe' : 'English'}`}
                 aria-expanded={languageMenuOpen}
                 aria-haspopup="true"
               >
-                <Globe size={20} className="text-gray-600" />
-                <span className="text-sm font-medium text-gray-700 uppercase hidden sm:inline">
+                <Globe size={20} className="text-gray-600 dark:text-gray-300" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase hidden sm:inline">
                   {i18n.language}
                 </span>
               </button>
               {languageMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                   <button
                     onClick={() => changeLanguage('tr')}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors min-h-[44px] ${
-                      i18n.language === 'tr' ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-700'
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition-colors min-h-[44px] ${
+                      i18n.language === 'tr' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium' : 'text-gray-700 dark:text-gray-300'
                     }`}
                     aria-label="Türkçe dili seç"
                     aria-current={i18n.language === 'tr' ? 'true' : undefined}
@@ -112,8 +115,8 @@ export default function Layout({ children }: LayoutProps) {
                   </button>
                   <button
                     onClick={() => changeLanguage('en')}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors min-h-[44px] ${
-                      i18n.language === 'en' ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-700'
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition-colors min-h-[44px] ${
+                      i18n.language === 'en' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium' : 'text-gray-700 dark:text-gray-300'
                     }`}
                     aria-label="Select English language"
                     aria-current={i18n.language === 'en' ? 'true' : undefined}
@@ -132,8 +135,8 @@ export default function Layout({ children }: LayoutProps) {
       <aside
         id="sidebar-navigation"
         className={`
-          fixed top-14 left-0 bottom-0 w-64 bg-white border-r border-gray-200
-          transform transition-transform duration-200 ease-in-out z-40
+          fixed top-14 left-0 bottom-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+          transform transition-all duration-200 ease-in-out z-40
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}
@@ -151,8 +154,8 @@ export default function Layout({ children }: LayoutProps) {
                   w-full flex items-center gap-3 px-4 py-3 rounded-lg
                   transition-colors duration-150
                   ${isActive
-                    ? 'bg-primary-50 text-primary-700 font-medium'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
                   }
                 `}
                 aria-label={item.label}
@@ -166,8 +169,8 @@ export default function Layout({ children }: LayoutProps) {
         </nav>
 
         {/* Özet Bilgiler */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-          <div className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg p-4 text-white">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 rounded-lg p-4 text-white shadow-md">
             <p className="text-xs opacity-80">{t('sidebar.totalTransactions')}</p>
             <p className="text-2xl font-bold">{state.transactions.length}</p>
             <p className="text-xs opacity-80 mt-2">{t('sidebar.activePOS')}</p>
