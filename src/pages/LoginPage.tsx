@@ -2,19 +2,32 @@
 // LOGIN SAYFASI
 // ===========================================
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Lock, Mail, AlertCircle, Eye, EyeOff, LogIn } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Lock, Mail, AlertCircle, Eye, EyeOff, LogIn, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginCredentials } from '../types';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 export default function LoginPage() {
   const { t } = useTranslation();
   const { login } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Check for success message from navigation state
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      // Clear the state after showing message
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
@@ -28,7 +41,8 @@ export default function LoginPage() {
 
     try {
       await login(credentials);
-      // Navigation will happen automatically via App.tsx checking auth state
+      console.log('✅ Login successful! Navigating to dashboard...');
+      navigate('/dashboard');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'auth.errors.invalidCredentials';
       // Check if error message is a translation key
@@ -42,6 +56,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Language Switcher */}
+        <div className="flex justify-end mb-4">
+          <LanguageSwitcher variant="compact" />
+        </div>
+
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 dark:bg-primary-500 rounded-2xl mb-4">
@@ -57,6 +76,18 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-green-900 dark:text-green-300">
+                  {successMessage}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (

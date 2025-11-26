@@ -53,8 +53,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Check for existing session on mount
   useEffect(() => {
+    let timeoutFired = false;
+
+    // FAIL-SAFE: Force clear loading after 5 seconds no matter what
+    const failSafeTimeout = setTimeout(() => {
+      console.error('🚨 FAIL-SAFE: Forcing isLoading = false after 5 seconds');
+      setAuthState(prev => ({
+        ...prev,
+        isLoading: false
+      }));
+    }, 5000);
+
     const checkSession = async () => {
+      console.log('🔍 Starting session check...');
+
       if (!isSupabaseConfigured()) {
+        console.log('📴 Supabase not configured, using mock mode');
         // Fallback to localStorage for mock mode
         try {
           const storedUser = localStorage.getItem('posum_user');
@@ -67,12 +81,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               user.lastLogin = new Date(user.lastLogin);
             }
 
+            console.log('✅ Mock user found:', user.email);
+            clearTimeout(failSafeTimeout);
             setAuthState({
               user,
               isAuthenticated: true,
               isLoading: false
             });
           } else {
+            console.log('❌ No mock user found');
+            clearTimeout(failSafeTimeout);
             setAuthState({
               user: null,
               isAuthenticated: false,
@@ -80,7 +98,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
           }
         } catch (error) {
-          console.error('Session check error:', error);
+          console.error('❌ Mock session check error:', error);
+          clearTimeout(failSafeTimeout);
           setAuthState({
             user: null,
             isAuthenticated: false,
@@ -90,13 +109,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Use Supabase session
+      // CRITICAL: Aggressive 5-second timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.error('⏱️ Session check timeout! Force clearing...');
+        timeoutFired = true;
+
+        // Clear any invalid sessions
+        console.log('🧹 Clearing invalid session...');
+        supabase.auth.signOut().catch(err => console.error('⚠️ Timeout signOut failed:', err));
+
+        setAuthState({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false
+        });
+      }, 5000); // REDUCED to 5 seconds for faster recovery
+
       try {
+        console.log('🔐 Checking Supabase session...');
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
+        // Don't process if timeout already fired
+        if (timeoutFired) {
+          console.log('⏱️ Timeout already fired, ignoring session check result');
+          return;
+        }
+
+        console.log('📦 Session result:', {
+          hasSession: !!session,
+          userId: session?.user?.id,
+          error: sessionError?.message
+        });
+
         if (sessionError) {
-          console.error('Session error:', sessionError);
-          await supabase.auth.signOut();
+          console.error('❌ Session error:', sessionError);
+          clearTimeout(timeoutId);
+          clearTimeout(failSafeTimeout);
+          // Non-blocking sign out
+          supabase.auth.signOut().catch(err => console.error('⚠️ Sign out failed:', err));
           setAuthState({
             user: null,
             isAuthenticated: false,
@@ -106,17 +156,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         if (session?.user) {
-          // Fetch user profile from database
-          const { data: profile, error: profileError } = await supabase
+          console.log('👤 Session user found, fetching profile...');
+
+          // Fetch user profile with timeout protection
+          const profilePromise = supabase
             .from('users')
             .select('*')
             .eq('id', session.user.id)
             .single();
 
-          if (profileError) {
-            console.error('Profile fetch error:', profileError);
-            // Profile not found, sign out and clear session
-            await supabase.auth.signOut();
+          const { data: profile, error: profileError } = await profilePromise;
+
+          // Don't process if timeout already fired
+          if (timeoutFired) {
+            console.log('⏱️ Timeout already fired, ignoring profile result');
+            return;
+          }
+
+          console.log('📋 Profile result:', {
+            hasProfile: !!profile,
+            profileEmail: profile?.email,
+            error: profileError?.message,
+            errorCode: profileError?.code
+          });
+
+          if (profileError || !profile) {
+            console.error('❌ Profile not found or error:', profileError);
+            clearTimeout(timeoutId);
+            clearTimeout(failSafeTimeout);
+            // Non-blocking sign out
+            supabase.auth.signOut().catch(err => console.error('⚠️ Sign out failed:', err));
             setAuthState({
               user: null,
               isAuthenticated: false,
@@ -125,32 +194,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
           }
 
-          if (profile) {
-            const user: User = {
-              id: profile.id,
-              email: profile.email,
-              name: profile.name,
-              role: profile.role,
-              avatar: profile.avatar || undefined,
-              createdAt: new Date(profile.created_at),
-              lastLogin: profile.last_login ? new Date(profile.last_login) : undefined
-            };
+          const user: User = {
+            id: profile.id,
+            email: profile.email,
+            name: profile.name,
+            role: profile.role,
+            avatar: profile.avatar || undefined,
+            createdAt: new Date(profile.created_at),
+            lastLogin: profile.last_login ? new Date(profile.last_login) : undefined
+          };
 
-            setAuthState({
-              user,
-              isAuthenticated: true,
-              isLoading: false
-            });
-          } else {
-            // No profile, sign out
-            await supabase.auth.signOut();
-            setAuthState({
-              user: null,
-              isAuthenticated: false,
-              isLoading: false
-            });
-          }
+          console.log('✅ Session check complete, user authenticated:', user.email);
+          clearTimeout(timeoutId);
+          clearTimeout(failSafeTimeout);
+          setAuthState({
+            user,
+            isAuthenticated: true,
+            isLoading: false
+          });
         } else {
+          console.log('❌ No session user found');
+          clearTimeout(timeoutId);
+          clearTimeout(failSafeTimeout);
           setAuthState({
             user: null,
             isAuthenticated: false,
@@ -158,9 +223,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
         }
       } catch (error) {
-        console.error('Session check error:', error);
-        // Clear session on error
-        await supabase.auth.signOut();
+        console.error('❌ Session check fatal error:', error);
+
+        // Don't process if timeout already fired
+        if (timeoutFired) {
+          console.log('⏱️ Timeout already fired, ignoring fatal error');
+          return;
+        }
+
+        clearTimeout(timeoutId);
+        clearTimeout(failSafeTimeout);
+        // Non-blocking sign out
+        supabase.auth.signOut().catch(err => console.error('⚠️ Sign out failed:', err));
         setAuthState({
           user: null,
           isAuthenticated: false,
@@ -169,38 +243,144 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    // CRITICAL: Check URL hash for password recovery BEFORE anything else
+    // This is more reliable than waiting for PASSWORD_RECOVERY event
+    if (isSupabaseConfigured()) {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const hasRecoveryToken = hashParams.get('type') === 'recovery' || window.location.hash.includes('recovery');
+
+      if (hasRecoveryToken) {
+        console.log('🔑 DETECTED PASSWORD RECOVERY IN URL HASH');
+        console.log('🔑 Hash params:', window.location.hash);
+        console.log('🔑 Setting password recovery mode flag IMMEDIATELY');
+        sessionStorage.setItem('password_recovery_mode', 'true');
+      }
+    }
+
     checkSession();
 
     // Subscribe to auth state changes
     if (isSupabaseConfigured()) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('🔔 AUTH STATE CHANGE EVENT');
+        console.log('   Event:', event);
+        console.log('   Has Session:', !!session);
+        console.log('   Session User ID:', session?.user?.id || 'N/A');
+        console.log('   Current Path:', window.location.pathname);
+        console.log('   URL Hash:', window.location.hash || 'none');
+
+        const currentFlag = sessionStorage.getItem('password_recovery_mode');
+        console.log('   Recovery Mode Flag:', currentFlag || 'not set');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+        // Handle sign out event
+        if (event === 'SIGNED_OUT') {
+          console.log('✅ SIGNED_OUT event - clearing state');
+          setAuthState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false
+          });
+          return;
+        }
+
+        // CRITICAL: Don't auto-login on password recovery
+        // User must complete password reset flow first
+        if (event === 'PASSWORD_RECOVERY') {
+          console.log('🔑 PASSWORD_RECOVERY EVENT DETECTED');
+          console.log('🔑 Setting password recovery mode flag');
+
+          // Set flag to prevent auto-login
+          sessionStorage.setItem('password_recovery_mode', 'true');
+
+          setAuthState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false
+          });
+
+          // Redirect to reset password page
+          if (window.location.pathname !== '/reset-password') {
+            console.log('🔑 Redirecting from', window.location.pathname, 'to /reset-password');
+            window.location.href = '/reset-password';
+          } else {
+            console.log('🔑 Already on /reset-password');
+          }
+
+          return;
+        }
+
+        // Check if we're in password recovery mode
+        const isPasswordRecoveryMode = sessionStorage.getItem('password_recovery_mode') === 'true';
+
+        if (isPasswordRecoveryMode) {
+          console.log('🚫 PASSWORD RECOVERY MODE ACTIVE - BLOCKING ALL AUTH');
+          console.log('🚫 Event:', event);
+          console.log('🚫 Has Session:', !!session);
+
+          // Keep user logged out
+          setAuthState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false
+          });
+
+          // Make sure we're on the reset password page
+          if (window.location.pathname !== '/reset-password') {
+            console.log('🔑 Recovery mode: Redirecting to /reset-password');
+            window.location.href = '/reset-password';
+          }
+
+          console.log('🚫 AUTH BLOCKED - Exiting handler');
+          return;
+        }
+
+        // Handle user session
         if (session?.user) {
-          const { data: profile, error: profileError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+          console.log('👤 Processing session for user:', session.user.id);
+          try {
+            console.log('📡 onAuthStateChange: Fetching profile for', session.user.id);
 
-          if (profile) {
-            const user: User = {
-              id: profile.id,
-              email: profile.email,
-              name: profile.name,
-              role: profile.role,
-              avatar: profile.avatar || undefined,
-              createdAt: new Date(profile.created_at),
-              lastLogin: profile.last_login ? new Date(profile.last_login) : undefined
-            };
+            const { data: profile, error: profileError } = await supabase
+              .from('users')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
 
-            setAuthState({
-              user,
-              isAuthenticated: true,
-              isLoading: false
+            console.log('📡 onAuthStateChange: Profile result:', {
+              hasProfile: !!profile,
+              error: profileError?.message
             });
-          } else if (profileError) {
-            // Profile doesn't exist, sign out orphaned user
-            console.error('Profile not found during auth state change:', profileError);
-            await supabase.auth.signOut();
+
+            if (profile) {
+              const user: User = {
+                id: profile.id,
+                email: profile.email,
+                name: profile.name,
+                role: profile.role,
+                avatar: profile.avatar || undefined,
+                createdAt: new Date(profile.created_at),
+                lastLogin: profile.last_login ? new Date(profile.last_login) : undefined
+              };
+
+              console.log('📡 onAuthStateChange: Setting authenticated state for', user.email);
+              setAuthState({
+                user,
+                isAuthenticated: true,
+                isLoading: false
+              });
+            } else if (profileError) {
+              // Profile doesn't exist - just clear state, don't call signOut again
+              console.error('📡 onAuthStateChange: Profile not found:', profileError);
+              setAuthState({
+                user: null,
+                isAuthenticated: false,
+                isLoading: false
+              });
+            }
+          } catch (error) {
+            console.error('📡 onAuthStateChange: Error in handler:', error);
             setAuthState({
               user: null,
               isAuthenticated: false,
@@ -208,6 +388,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
           }
         } else {
+          console.log('📡 onAuthStateChange: No session user, clearing state');
           setAuthState({
             user: null,
             isAuthenticated: false,
@@ -216,8 +397,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       });
 
+      // Cleanup on unmount
       return () => {
+        clearTimeout(failSafeTimeout);
         subscription.unsubscribe();
+      };
+    } else {
+      // If not configured, still need to cleanup timeout
+      return () => {
+        clearTimeout(failSafeTimeout);
       };
     }
   }, []);
@@ -232,7 +420,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
 
       if (!mockUser) {
-        throw new Error('Invalid email or password');
+        throw new Error('auth.errors.invalidCredentials');
       }
 
       const user: User = {
@@ -257,33 +445,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Supabase login
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: credentials.email,
-      password: credentials.password
-    });
+    console.log('🔐 Step 1: Attempting Supabase login...', credentials.email);
 
-    if (error) {
-      throw new Error(error.message);
-    }
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password
+      });
 
-    if (!data.user) {
-      throw new Error('Login failed');
-    }
+      console.log('✅ Step 2: Login API response:', {
+        hasUser: !!data?.user,
+        userId: data?.user?.id,
+        error: error?.message
+      });
 
-    // Fetch user profile
-    const { data: profile } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', data.user.id)
-      .single();
+      if (error) {
+        console.error('❌ Login error:', error);
+        throw new Error('auth.errors.invalidCredentials');
+      }
 
-    if (profile) {
+      if (!data.user) {
+        throw new Error('auth.errors.invalidCredentials');
+      }
+
+      // Verify profile exists
+      console.log('🔍 Step 3: Checking if profile exists for user:', data.user.id);
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+
+      console.log('👤 Step 4: Profile check result:', {
+        hasProfile: !!profile,
+        profileData: profile ? { id: profile.id, email: profile.email } : null,
+        error: profileError?.message,
+        errorCode: profileError?.code
+      });
+
+      if (profileError || !profile) {
+        console.error('❌ Profile not found or error:', profileError);
+        // Sign out if profile doesn't exist
+        await supabase.auth.signOut();
+        throw new Error('auth.errors.profileNotFound');
+      }
+
       // Update last login
+      console.log('⏰ Step 5: Updating last login...');
       await supabase
         .from('users')
         .update({ last_login: new Date().toISOString() })
         .eq('id', data.user.id);
+      console.log('✅ Last login updated');
 
+      // IMMEDIATELY set auth state (don't wait for onAuthStateChange)
       const user: User = {
         id: profile.id,
         email: profile.email,
@@ -294,11 +509,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         lastLogin: new Date()
       };
 
+      console.log('🎉 Step 6: Login successful! Setting auth state immediately for:', user.email);
       setAuthState({
         user,
         isAuthenticated: true,
         isLoading: false
       });
+
+    } catch (err) {
+      console.error('❌ Login process failed:', err);
+      throw err;
     }
   };
 
@@ -334,6 +554,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Supabase register
+    console.log('📝 Step 1: Starting Supabase registration for:', data.email);
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -344,10 +565,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
+    console.log('📝 Step 2: SignUp API response:', {
+      hasUser: !!authData?.user,
+      userId: authData?.user?.id,
+      error: authError?.message
+    });
+
     if (authError) {
+      console.error('❌ Registration error:', authError);
       // Check if user already exists in auth.users
       if (authError.message.toLowerCase().includes('already registered') ||
           authError.message.toLowerCase().includes('already exists')) {
+        console.log('⚠️ User already registered, attempting to sign in...');
         // Try to sign in and check if profile exists
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email: data.email,
@@ -355,10 +584,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
 
         if (signInError) {
+          console.error('❌ Auto sign-in failed:', signInError);
           throw new Error('auth.errors.userAlreadyRegistered');
         }
 
         if (signInData.user) {
+          console.log('✅ Auto sign-in successful, checking for profile...');
           // Check if profile exists
           const { data: existingProfile } = await supabase
             .from('users')
@@ -367,7 +598,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .single();
 
           if (existingProfile) {
-            // Profile exists, complete login
+            console.log('✅ Profile exists, registration complete via sign-in');
+
+            // Update last login
+            await supabase
+              .from('users')
+              .update({ last_login: new Date().toISOString() })
+              .eq('id', signInData.user.id);
+
+            // IMMEDIATELY set auth state (don't wait for onAuthStateChange)
             const user: User = {
               id: existingProfile.id,
               email: existingProfile.email,
@@ -378,6 +617,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               lastLogin: new Date()
             };
 
+            console.log('✅ Setting auth state immediately for:', user.email);
             setAuthState({
               user,
               isAuthenticated: true,
@@ -385,8 +625,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
             return;
           } else {
+            console.log('⚠️ Profile missing, creating new profile...');
             // Profile doesn't exist, create it
-            const { data: newProfile } = await supabase
+            const { data: newProfile, error: createError } = await supabase
               .from('users')
               .insert({
                 id: signInData.user.id,
@@ -399,7 +640,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               .select()
               .single();
 
+            if (createError) {
+              console.error('❌ Profile creation failed:', createError);
+              await supabase.auth.signOut();
+              throw new Error('auth.errors.registrationIncomplete');
+            }
+
             if (newProfile) {
+              console.log('✅ Profile created successfully, registration complete');
+
+              // IMMEDIATELY set auth state
               const user: User = {
                 id: newProfile.id,
                 email: newProfile.email,
@@ -410,6 +660,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 lastLogin: new Date()
               };
 
+              console.log('✅ Setting auth state immediately for:', user.email);
               setAuthState({
                 user,
                 isAuthenticated: true,
@@ -424,10 +675,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (!authData.user) {
+      console.error('❌ No user data returned from signUp');
       throw new Error('Registration failed');
     }
 
+    console.log('✅ Step 3: User created in auth.users:', authData.user.id);
+
     // Check if profile already exists (for existing auth users without profile)
+    console.log('🔍 Step 4: Checking if profile already exists...');
     const { data: checkProfile } = await supabase
       .from('users')
       .select('*')
@@ -435,7 +690,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .single();
 
     if (checkProfile) {
-      // Profile already exists, use it
+      console.log('✅ Profile already exists, registration complete');
+
+      // Update last login
+      await supabase
+        .from('users')
+        .update({ last_login: new Date().toISOString() })
+        .eq('id', authData.user.id);
+
+      // IMMEDIATELY set auth state
       const user: User = {
         id: checkProfile.id,
         email: checkProfile.email,
@@ -446,6 +709,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         lastLogin: new Date()
       };
 
+      console.log('✅ Setting auth state immediately for:', user.email);
       setAuthState({
         user,
         isAuthenticated: true,
@@ -453,6 +717,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       return;
     }
+
+    console.log('⚠️ Step 5: Profile does not exist, creating new profile...');
 
     // Create user profile manually with RLS policy
     const { data: insertData, error: insertError } = await supabase
@@ -469,9 +735,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .single();
 
     if (insertError) {
-      console.error('Insert profile error:', insertError);
+      console.error('❌ Step 6: Insert profile error:', insertError);
 
       // If insert fails, try to fetch existing profile one more time
+      console.log('⚠️ Trying to fetch existing profile one more time...');
       const { data: existingProfile, error: fetchError } = await supabase
         .from('users')
         .select('*')
@@ -479,52 +746,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (fetchError) {
-        console.error('Fetch existing profile error:', fetchError);
+        console.error('❌ Fetch existing profile error:', fetchError);
         await supabase.auth.signOut();
         throw new Error('auth.errors.registrationIncomplete');
       }
 
       if (existingProfile) {
-        const newUser: User = {
+        console.log('✅ Found existing profile, registration complete');
+
+        // IMMEDIATELY set auth state
+        const user: User = {
           id: existingProfile.id,
           email: existingProfile.email,
           name: existingProfile.name,
           role: existingProfile.role,
+          avatar: existingProfile.avatar || undefined,
           createdAt: new Date(existingProfile.created_at),
-          lastLogin: existingProfile.last_login ? new Date(existingProfile.last_login) : undefined
+          lastLogin: new Date()
         };
 
+        console.log('✅ Setting auth state immediately for:', user.email);
         setAuthState({
-          user: newUser,
+          user,
           isAuthenticated: true,
           isLoading: false
         });
         return;
       }
 
+      console.error('❌ No profile found, registration failed');
       await supabase.auth.signOut();
       throw new Error('auth.errors.registrationFailed');
     }
 
-    // Use inserted data if available, otherwise create from input
-    const profileData = insertData || {
-      id: authData.user.id,
-      email: data.email,
-      name: data.name,
-      role: 'user',
-      created_at: new Date().toISOString(),
-      last_login: new Date().toISOString()
-    };
+    console.log('✅ Step 6: Profile created successfully!');
 
+    // IMMEDIATELY set auth state with new profile
     const newUser: User = {
-      id: profileData.id,
-      email: profileData.email,
-      name: profileData.name,
-      role: profileData.role as 'user' | 'admin' | 'viewer',
-      createdAt: new Date(profileData.created_at),
-      lastLogin: profileData.last_login ? new Date(profileData.last_login) : undefined
+      id: insertData.id,
+      email: insertData.email,
+      name: insertData.name,
+      role: insertData.role,
+      avatar: insertData.avatar || undefined,
+      createdAt: new Date(insertData.created_at),
+      lastLogin: new Date()
     };
 
+    console.log('✅ Setting auth state immediately for:', newUser.email);
     setAuthState({
       user: newUser,
       isAuthenticated: true,

@@ -234,10 +234,14 @@
       "userAlreadyRegistered": "Bu e-posta zaten kayıtlı. Lütfen giriş yapın veya şifrenizi unuttuysanız şifre sıfırlamayı kullanın.",
       "registrationFailed": "Kayıt başarısız oldu. Lütfen tekrar deneyin.",
       "registrationIncomplete": "Kayıt tamamlanamadı. Lütfen farklı bir e-posta ile deneyin veya destek ile iletişime geçin.",
-      "invalidCredentials": "Geçersiz e-posta veya şifre",
-      "sessionError": "Oturum hatası oluştu",
-      "profileNotFound": "Kullanıcı profili bulunamadı",
-      "generic": "Bir hata oluştu. Lütfen tekrar deneyin."
+      "invalidCredentials": "Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edin.",
+      "sessionError": "Oturum hatası oluştu. Lütfen tekrar deneyin.",
+      "profileNotFound": "Kullanıcı profili bulunamadı. Lütfen destek ile iletişime geçin.",
+      "generic": "Bir hata oluştu. Lütfen tekrar deneyin.",
+      "invalidLoginCredentials": "Geçersiz e-posta veya şifre. Bilgilerinizi kontrol edip tekrar deneyin.",
+      "emailAlreadyInUse": "Bu e-posta adresi zaten kullanımda.",
+      "weakPassword": "Şifreniz çok zayıf. Lütfen daha güçlü bir şifre seçin.",
+      "userNotFound": "Kullanıcı bulunamadı. Lütfen kayıt olun."
     },
     "forgotPasswordTitle": "Şifrenizi mi Unuttunuz?",
     "forgotPasswordSubtitle": "E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim",
@@ -252,6 +256,92 @@
     "confirmNewPassword": "Yeni Şifre Tekrar",
     "updatePassword": "Şifreyi Güncelle",
     "updatingPassword": "Güncelleniyor...",
-    "passwordUpdated": "Şifreniz başarıyla güncellendi"
+    "passwordUpdated": "Şifreniz başarıyla güncellendi",
+    "termsOfServiceContent": {
+      "title": "Kullanım Koşulları",
+      "lastUpdated": "Son Güncellenme: 27 Kasım 2025",
+      "introduction": "POSum POS Mutabakat Sistemi'ni kullanarak aşağıdaki kullanım koşullarını kabul etmiş olursunuz. Lütfen hizmetimizi kullanmadan önce bu koşulları dikkatlice okuyunuz.",
+      "section1": {
+        "title": "1. Hizmet Tanımı",
+        "content": "POSum, işletmenizin POS cihazları üzerinden gerçekleştirdiği finansal işlemleri takip etmenize, banka komisyonlarını hesaplamanıza ve mutabakat işlemlerinizi yönetmenize olanak sağlayan bir yazılım hizmetidir. Hizmetimiz; işlem takibi, komisyon hesaplama, raporlama ve simülasyon araçları sunmaktadır."
+      },
+      "section2": {
+        "title": "2. Kullanıcı Sorumlulukları",
+        "content": "Kullanıcılar, sisteme girdikleri tüm bilgilerin doğruluğundan sorumludur. Hesap bilgilerinizi güvenli tutmak, yetkisiz erişimi önlemek ve sistemi yasalara uygun şekilde kullanmak kullanıcının sorumluluğundadır. Hesabınız üzerinden gerçekleştirilen tüm işlemlerden siz sorumlusunuz. Şüpheli bir aktivite fark ettiğinizde derhal bize bildirmeniz gerekmektedir."
+      },
+      "section3": {
+        "title": "3. Gizlilik ve Veri Güvenliği",
+        "content": "Finansal verilerinizin güvenliği bizim için önceliktir. Tüm veriler endüstri standardı şifreleme teknolojileri ile korunmaktadır. Verileriniz yalnızca hizmeti sağlamak amacıyla kullanılır ve üçüncü şahıslarla paylaşılmaz. Detaylı bilgi için Gizlilik Politikamızı inceleyiniz."
+      },
+      "section4": {
+        "title": "4. Fikri Mülkiyet Hakları",
+        "content": "POSum platformu, tasarımı, kaynak kodu, logoları ve tüm içeriği POSum'un fikri mülkiyetidir. Yazılı izin alınmadan kopyalanamaz, çoğaltılamaz veya dağıtılamaz. Kullanıcılar, sistemi yalnızca kendi işletmeleri için kullanma hakkına sahiptir."
+      },
+      "section5": {
+        "title": "5. Hizmet Değişiklikleri ve İptal",
+        "content": "POSum, önceden bildirimde bulunmaksızın hizmeti geliştirme, değiştirme veya sonlandırma hakkını saklı tutar. Kullanım koşullarını ihlal eden hesaplar askıya alınabilir veya sonlandırılabilir. Ücretsiz deneme süresinden sonra ücretli aboneliğe geçmek isteğe bağlıdır."
+      },
+      "section6": {
+        "title": "6. Sorumluluk Sınırlaması",
+        "content": "POSum, hizmetin kesintisiz ve hatasız olacağını garanti etmez. Platform üzerinden yapılan hesaplamalar bilgilendirme amaçlıdır; nihai kararlarınızı verirken profesyonel mali danışmanlık almanızı öneririz. POSum, sistem kullanımından kaynaklanan dolaylı zararlardan sorumlu tutulamaz."
+      },
+      "section7": {
+        "title": "7. Uygulanacak Hukuk",
+        "content": "Bu kullanım koşulları Türkiye Cumhuriyeti kanunlarına tabidir. Hizmet kullanımından doğabilecek anlaşmazlıklar Türkiye mahkemelerinde çözümlenecektir. KVKK (Kişisel Verilerin Korunması Kanunu) kapsamındaki haklarınız saklıdır."
+      },
+      "contact": {
+        "title": "İletişim",
+        "content": "Kullanım koşulları hakkında sorularınız için: support@posum.com adresinden bizimle iletişime geçebilirsiniz."
+      }
+    },
+    "privacyPolicyContent": {
+      "title": "Gizlilik Politikası",
+      "lastUpdated": "Son Güncellenme: 27 Kasım 2025",
+      "introduction": "POSum olarak, kişisel verilerinizin gizliliğine önem veriyoruz. Bu politika, topladığımız verileri, kullanım şeklimizi ve haklarınızı açıklamaktadır. 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamındaki tüm yükümlülüklerimizi yerine getiriyoruz.",
+      "section1": {
+        "title": "1. Veri Sorumlusu",
+        "content": "POSum POS Mutabakat Sistemi olarak kişisel verilerinizin işlenmesinden sorumlu veri sorumlusuyuz. İletişim bilgilerimiz: support@posum.com"
+      },
+      "section2": {
+        "title": "2. Toplanan Kişisel Veriler",
+        "content": "Hizmetimizi kullanırken aşağıdaki verileri topluyoruz:\n\n• Kimlik Bilgileri: Ad, soyad, e-posta adresi\n• İşletme Bilgileri: Şirket adı, vergi numarası\n• Finansal İşlem Verileri: POS cihazı işlemleri, banka bilgileri, komisyon hesaplamaları\n• Teknik Veriler: IP adresi, tarayıcı bilgisi, kullanım logları\n• İletişim Bilgileri: Destek taleplerinizde paylaştığınız bilgiler"
+      },
+      "section3": {
+        "title": "3. Verilerin İşlenme Amaçları",
+        "content": "Kişisel verileriniz aşağıdaki amaçlarla işlenmektedir:\n\n• Hizmet Sunumu: POS mutabakat sisteminin çalışması ve hesap yönetimi\n• Güvenlik: Yetkisiz erişimlerin önlenmesi ve güvenlik denetimi\n• İletişim: Müşteri destek hizmetleri ve bilgilendirme\n• Analiz: Hizmet kalitesinin iyileştirilmesi ve yeni özelliklerin geliştirilmesi\n• Yasal Yükümlülükler: Mali mevzuat ve vergi kanunlarına uyum"
+      },
+      "section4": {
+        "title": "4. Veri Güvenliği",
+        "content": "Verilerinizin güvenliği için aşağıdaki önlemleri alıyoruz:\n\n• SSL/TLS şifreleme ile veri iletimi\n• Şifreli veri tabanı saklama (AES-256)\n• Düzenli güvenlik taramaları ve güncellemeler\n• Erişim kontrolü ve yetkilendirme sistemleri\n• Günlük yedekleme ve felaket kurtarma planları\n• GDPR ve KVKK uyumlu veri işleme"
+      },
+      "section5": {
+        "title": "5. Veri Paylaşımı",
+        "content": "Kişisel verileriniz aşağıdaki durumlar dışında üçüncü şahıslarla paylaşılmaz:\n\n• Yasal zorunluluklar (mahkeme kararı, vergi denetimi)\n• Hizmet sağlayıcılar (sunucu hizmeti, e-posta hizmeti) - gizlilik sözleşmesi ile korunur\n• Açık rızanızın bulunması durumu\n\nVerileriniz hiçbir şekilde pazarlama amaçlı satılmaz veya kiralanmaz."
+      },
+      "section6": {
+        "title": "6. KVKK Kapsamındaki Haklarınız",
+        "content": "6698 sayılı Kanun kapsamında aşağıdaki haklara sahipsiniz:\n\n• Kişisel verilerinizin işlenip işlenmediğini öğrenme\n• İşlenmişse buna ilişkin bilgi talep etme\n• İşlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme\n• Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme\n• Eksik veya yanlış işlenmişse düzeltilmesini isteme\n• Kanunda öngörülen şartlar çerçevesinde silinmesini veya yok edilmesini isteme\n• Düzeltme, silme veya yok edilme işlemlerinin paylaşıldığı üçüncü kişilere bildirilmesini isteme\n• Otomatik sistemler ile analiz edilmesi sonucu aleyhinize bir sonuç çıkmasına itiraz etme\n• Kanuna aykırı işleme nedeniyle zarara uğramanız halinde zararın giderilmesini talep etme"
+      },
+      "section7": {
+        "title": "7. Çerezler (Cookies)",
+        "content": "Web sitemiz, kullanıcı deneyimini iyileştirmek için çerezler kullanmaktadır:\n\n• Zorunlu Çerezler: Sistemin çalışması için gerekli\n• Performans Çerezleri: Hizmet kalitesini ölçmek için\n• Oturum Çerezleri: Giriş bilgilerinizi hatırlamak için\n\nÇerez tercihlerinizi tarayıcı ayarlarınızdan yönetebilirsiniz."
+      },
+      "section8": {
+        "title": "8. Veri Saklama Süresi",
+        "content": "Kişisel verileriniz, işleme amacının gerekli kıldığı süre boyunca ve yasal saklama yükümlülükleri (Vergi Usul Kanunu - 10 yıl) dikkate alınarak saklanır. Bu süre sonunda verileriniz güvenli şekilde silinir veya anonim hale getirilir."
+      },
+      "section9": {
+        "title": "9. Başvuru Hakkı",
+        "content": "KVKK kapsamındaki haklarınızı kullanmak için support@posum.com adresine başvurabilirsiniz. Başvurularınız en geç 30 gün içinde yanıtlanacaktır. Başvurunuzda kimlik doğrulaması yapmanız gerekebilir."
+      },
+      "section10": {
+        "title": "10. Politika Güncellemeleri",
+        "content": "Bu gizlilik politikasını zaman zaman güncelleyebiliriz. Önemli değişiklikler e-posta yoluyla bildirilecektir. Politikanın en güncel halini web sitemizden inceleyebilirsiniz."
+      },
+      "contact": {
+        "title": "İletişim Bilgileri",
+        "content": "Gizlilik politikası ve kişisel verilerinizle ilgili:\n\nE-posta: support@posum.com\nKVKK Başvuru: kvkk@posum.com\nAdres: [Şirket Adresi]"
+      }
+    }
   }
 }

@@ -234,10 +234,14 @@
       "userAlreadyRegistered": "This email is already registered. Please login instead or use password reset if you forgot your password.",
       "registrationFailed": "Registration failed. Please try again.",
       "registrationIncomplete": "Registration incomplete. Please try again with a different email or contact support.",
-      "invalidCredentials": "Invalid email or password",
-      "sessionError": "Session error occurred",
-      "profileNotFound": "User profile not found",
-      "generic": "An error occurred. Please try again."
+      "invalidCredentials": "Invalid email or password. Please check your credentials.",
+      "sessionError": "Session error occurred. Please try again.",
+      "profileNotFound": "User profile not found. Please contact support.",
+      "generic": "An error occurred. Please try again.",
+      "invalidLoginCredentials": "Invalid email or password. Please check your credentials and try again.",
+      "emailAlreadyInUse": "This email address is already in use.",
+      "weakPassword": "Your password is too weak. Please choose a stronger password.",
+      "userNotFound": "User not found. Please register."
     },
     "forgotPasswordTitle": "Forgot Your Password?",
     "forgotPasswordSubtitle": "Enter your email address and we'll send you a password reset link",
@@ -252,6 +256,92 @@
     "confirmNewPassword": "Confirm New Password",
     "updatePassword": "Update Password",
     "updatingPassword": "Updating...",
-    "passwordUpdated": "Your password has been updated successfully"
+    "passwordUpdated": "Your password has been updated successfully",
+    "termsOfServiceContent": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last Updated: November 27, 2025",
+      "introduction": "By using the POSum POS Reconciliation System, you agree to the following terms of service. Please read these terms carefully before using our service.",
+      "section1": {
+        "title": "1. Service Description",
+        "content": "POSum is a software service that enables your business to track financial transactions conducted through POS devices, calculate bank commissions, and manage reconciliation processes. Our service provides transaction tracking, commission calculation, reporting, and simulation tools."
+      },
+      "section2": {
+        "title": "2. User Responsibilities",
+        "content": "Users are responsible for the accuracy of all information entered into the system. It is the user's responsibility to keep account information secure, prevent unauthorized access, and use the system in compliance with laws. You are responsible for all activities performed under your account. You must immediately notify us if you notice any suspicious activity."
+      },
+      "section3": {
+        "title": "3. Privacy and Data Security",
+        "content": "The security of your financial data is our priority. All data is protected with industry-standard encryption technologies. Your data is used solely to provide the service and is not shared with third parties. For detailed information, please review our Privacy Policy."
+      },
+      "section4": {
+        "title": "4. Intellectual Property Rights",
+        "content": "The POSum platform, including its design, source code, logos, and all content, is the intellectual property of POSum. It may not be copied, reproduced, or distributed without written permission. Users have the right to use the system only for their own business purposes."
+      },
+      "section5": {
+        "title": "5. Service Changes and Cancellation",
+        "content": "POSum reserves the right to improve, modify, or terminate the service without prior notice. Accounts that violate the terms of service may be suspended or terminated. Upgrading to a paid subscription after the free trial period is optional."
+      },
+      "section6": {
+        "title": "6. Limitation of Liability",
+        "content": "POSum does not guarantee that the service will be uninterrupted and error-free. Calculations made through the platform are for informational purposes; we recommend seeking professional financial advice when making final decisions. POSum cannot be held liable for indirect damages resulting from system use."
+      },
+      "section7": {
+        "title": "7. Applicable Law",
+        "content": "These terms of service are subject to the laws of the Republic of Turkey. Disputes arising from service use will be resolved in Turkish courts. Your rights under KVKK (Personal Data Protection Law) are reserved."
+      },
+      "contact": {
+        "title": "Contact",
+        "content": "For questions about the terms of service: You can contact us at support@posum.com"
+      }
+    },
+    "privacyPolicyContent": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated: November 27, 2025",
+      "introduction": "At POSum, we value the privacy of your personal data. This policy explains the data we collect, how we use it, and your rights. We fulfill all our obligations under Law No. 6698 on the Protection of Personal Data (KVKK).",
+      "section1": {
+        "title": "1. Data Controller",
+        "content": "As POSum POS Reconciliation System, we are the data controller responsible for processing your personal data. Our contact information: support@posum.com"
+      },
+      "section2": {
+        "title": "2. Personal Data Collected",
+        "content": "When using our service, we collect the following data:\n\n• Identity Information: Name, surname, email address\n• Business Information: Company name, tax number\n• Financial Transaction Data: POS device transactions, bank information, commission calculations\n• Technical Data: IP address, browser information, usage logs\n• Communication Information: Information shared in your support requests"
+      },
+      "section3": {
+        "title": "3. Data Processing Purposes",
+        "content": "Your personal data is processed for the following purposes:\n\n• Service Provision: Operation of the POS reconciliation system and account management\n• Security: Prevention of unauthorized access and security monitoring\n• Communication: Customer support services and notifications\n• Analysis: Improving service quality and developing new features\n• Legal Obligations: Compliance with financial regulations and tax laws"
+      },
+      "section4": {
+        "title": "4. Data Security",
+        "content": "We take the following measures for data security:\n\n• Data transmission with SSL/TLS encryption\n• Encrypted database storage (AES-256)\n• Regular security scans and updates\n• Access control and authorization systems\n• Daily backups and disaster recovery plans\n• GDPR and KVKK compliant data processing"
+      },
+      "section5": {
+        "title": "5. Data Sharing",
+        "content": "Your personal data is not shared with third parties except in the following cases:\n\n• Legal requirements (court orders, tax audits)\n• Service providers (server service, email service) - protected by confidentiality agreements\n• When you give explicit consent\n\nYour data is never sold or rented for marketing purposes."
+      },
+      "section6": {
+        "title": "6. Your Rights Under KVKK",
+        "content": "Under Law No. 6698, you have the following rights:\n\n• To learn whether your personal data is being processed\n• To request information if it has been processed\n• To learn the purpose of processing and whether it is used appropriately\n• To know the third parties to whom it has been transferred domestically or abroad\n• To request correction if processed incompletely or incorrectly\n• To request deletion or destruction within the framework provided by law\n• To request notification of correction, deletion, or destruction to third parties\n• To object to adverse results from automatic system analysis\n• To demand compensation for damages if you suffer harm due to unlawful processing"
+      },
+      "section7": {
+        "title": "7. Cookies",
+        "content": "Our website uses cookies to improve user experience:\n\n• Essential Cookies: Required for system operation\n• Performance Cookies: To measure service quality\n• Session Cookies: To remember your login information\n\nYou can manage your cookie preferences through your browser settings."
+      },
+      "section8": {
+        "title": "8. Data Retention Period",
+        "content": "Your personal data is stored for the period required by the processing purpose and considering legal storage obligations (Tax Procedure Law - 10 years). After this period, your data is securely deleted or anonymized."
+      },
+      "section9": {
+        "title": "9. Right to Apply",
+        "content": "To exercise your rights under KVKK, you can apply to support@posum.com. Your applications will be responded to within 30 days at the latest. You may need to verify your identity in your application."
+      },
+      "section10": {
+        "title": "10. Policy Updates",
+        "content": "We may update this privacy policy from time to time. Significant changes will be notified via email. You can review the most current version of the policy on our website."
+      },
+      "contact": {
+        "title": "Contact Information",
+        "content": "For privacy policy and your personal data:\n\nEmail: support@posum.com\nKVKK Application: kvkk@posum.com\nAddress: [Company Address]"
+      }
+    }
   }
 }

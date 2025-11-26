@@ -3,19 +3,24 @@
 // ===========================================
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, Eye, EyeOff, UserPlus, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { RegisterData } from '../types';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import Dialog from '../components/Dialog';
 
 export default function RegisterPage() {
   const { t } = useTranslation();
   const { register } = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -48,12 +53,16 @@ export default function RegisterPage() {
         password: formData.password
       };
 
+      console.log('📝 Starting registration for:', registerData.email);
       await register(registerData);
-      // Navigation will happen automatically via App.tsx checking auth state
+      console.log('✅ Registration successful! Navigating to dashboard...');
+      navigate('/dashboard');
     } catch (err) {
+      console.error('❌ Registration failed:', err);
       const errorMessage = err instanceof Error ? err.message : 'auth.errors.registrationFailed';
       // Check if error message is a translation key
       const translatedError = errorMessage.startsWith('auth.') ? t(errorMessage) : errorMessage;
+      console.error('❌ Translated error:', translatedError);
       setError(translatedError);
     } finally {
       setIsLoading(false);
@@ -63,6 +72,11 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Language Switcher */}
+        <div className="flex justify-end mb-4">
+          <LanguageSwitcher variant="compact" />
+        </div>
+
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 dark:bg-primary-500 rounded-2xl mb-4">
@@ -202,13 +216,27 @@ export default function RegisterPage() {
               />
               <label htmlFor="terms" className="ml-2 text-sm text-gray-600 dark:text-gray-400">
                 {t('auth.agreeToTerms')}{' '}
-                <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowTerms(true);
+                  }}
+                  className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline"
+                >
                   {t('auth.termsOfService')}
-                </a>{' '}
+                </button>{' '}
                 {t('auth.and')}{' '}
-                <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowPrivacy(true);
+                  }}
+                  className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline"
+                >
                   {t('auth.privacyPolicy')}
-                </a>
+                </button>
               </label>
             </div>
 
@@ -264,6 +292,169 @@ export default function RegisterPage() {
             © 2024 POSum. {t('auth.allRightsReserved')}
           </p>
         </div>
+
+        {/* Terms of Service Dialog */}
+        <Dialog
+          isOpen={showTerms}
+          onClose={() => setShowTerms(false)}
+          title={t('auth.termsOfServiceContent.title')}
+          maxWidth="2xl"
+        >
+          <div className="space-y-6 text-gray-700 dark:text-gray-300">
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+              {t('auth.termsOfServiceContent.lastUpdated')}
+            </p>
+            <p>{t('auth.termsOfServiceContent.introduction')}</p>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.section1.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.section1.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.section2.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.section2.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.section3.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.section3.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.section4.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.section4.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.section5.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.section5.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.section6.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.section6.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.section7.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.section7.content')}</p>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.termsOfServiceContent.contact.title')}
+              </h3>
+              <p>{t('auth.termsOfServiceContent.contact.content')}</p>
+            </div>
+          </div>
+        </Dialog>
+
+        {/* Privacy Policy Dialog */}
+        <Dialog
+          isOpen={showPrivacy}
+          onClose={() => setShowPrivacy(false)}
+          title={t('auth.privacyPolicyContent.title')}
+          maxWidth="2xl"
+        >
+          <div className="space-y-6 text-gray-700 dark:text-gray-300">
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+              {t('auth.privacyPolicyContent.lastUpdated')}
+            </p>
+            <p>{t('auth.privacyPolicyContent.introduction')}</p>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section1.title')}
+              </h3>
+              <p>{t('auth.privacyPolicyContent.section1.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section2.title')}
+              </h3>
+              <p className="whitespace-pre-line">{t('auth.privacyPolicyContent.section2.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section3.title')}
+              </h3>
+              <p className="whitespace-pre-line">{t('auth.privacyPolicyContent.section3.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section4.title')}
+              </h3>
+              <p className="whitespace-pre-line">{t('auth.privacyPolicyContent.section4.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section5.title')}
+              </h3>
+              <p className="whitespace-pre-line">{t('auth.privacyPolicyContent.section5.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section6.title')}
+              </h3>
+              <p className="whitespace-pre-line">{t('auth.privacyPolicyContent.section6.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section7.title')}
+              </h3>
+              <p className="whitespace-pre-line">{t('auth.privacyPolicyContent.section7.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section8.title')}
+              </h3>
+              <p>{t('auth.privacyPolicyContent.section8.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section9.title')}
+              </h3>
+              <p>{t('auth.privacyPolicyContent.section9.content')}</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.section10.title')}
+              </h3>
+              <p>{t('auth.privacyPolicyContent.section10.content')}</p>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                {t('auth.privacyPolicyContent.contact.title')}
+              </h3>
+              <p className="whitespace-pre-line">{t('auth.privacyPolicyContent.contact.content')}</p>
+            </div>
+          </div>
+        </Dialog>
       </div>
     </div>
   );
