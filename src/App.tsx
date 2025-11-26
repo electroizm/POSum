@@ -2,10 +2,15 @@
 // ANA UYGULAMA BİLEŞENİ
 // ===========================================
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { AppProvider, useApp } from './contexts/AppContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import ToastContainer from './components/ToastContainer';
 import Layout from './components/Layout';
 import Loading from './components/Loading';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 // Lazy load all page components for better performance
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -37,8 +42,25 @@ function PageRouter() {
   }
 }
 
-// Ana Uygulama
-function App() {
+// Auth Router - handles login/register vs main app
+function AuthRouter() {
+  const { authState } = useAuth();
+  const [showRegister, setShowRegister] = useState(false);
+
+  // Show loading while checking auth
+  if (authState.isLoading) {
+    return <Loading message="Loading..." />;
+  }
+
+  // If not authenticated, show login/register
+  if (!authState.isAuthenticated) {
+    if (showRegister) {
+      return <RegisterPage onLoginClick={() => setShowRegister(false)} />;
+    }
+    return <LoginPage onRegisterClick={() => setShowRegister(true)} />;
+  }
+
+  // User is authenticated, show main app
   return (
     <AppProvider>
       <Layout>
@@ -46,7 +68,19 @@ function App() {
           <PageRouter />
         </Suspense>
       </Layout>
+      <ToastContainer />
     </AppProvider>
+  );
+}
+
+// Ana Uygulama
+function App() {
+  return (
+    <ErrorBoundary>
+      <AuthProvider>
+        <AuthRouter />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

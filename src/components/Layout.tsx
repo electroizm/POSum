@@ -5,9 +5,11 @@
 import React from 'react';
 import {
   LayoutDashboard, Receipt, Building2, Calculator,
-  BarChart3, Settings, Menu, X, CreditCard, Globe
+  BarChart3, Settings, Menu, X, CreditCard, Globe,
+  User, LogOut, UserCircle
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import ThemeToggle from './ThemeToggle';
 
@@ -17,10 +19,13 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { state, dispatch } = useApp();
+  const { authState, logout } = useAuth();
   const { t, i18n } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false);
+  const [userMenuOpen, setUserMenuOpen] = React.useState(false);
   const languageMenuRef = React.useRef<HTMLDivElement>(null);
+  const userMenuRef = React.useRef<HTMLDivElement>(null);
 
   // Dil menüsünü dışarı tıklandığında kapat
   React.useEffect(() => {
@@ -35,6 +40,19 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [languageMenuOpen]);
 
+  // User menüsünü dışarı tıklandığında kapat
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [userMenuOpen]);
+
   const menuItems = [
     { id: 'dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
     { id: 'transactions', label: t('nav.transactions'), icon: Receipt },
@@ -47,6 +65,11 @@ export default function Layout({ children }: LayoutProps) {
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     setLanguageMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    setUserMenuOpen(false);
+    logout();
   };
 
   return (
@@ -123,6 +146,61 @@ export default function Layout({ children }: LayoutProps) {
                     role="menuitem"
                   >
                     🇬🇧 English
+                  </button>
+                </div>
+              )}
+            </div>
+            {/* User Menu */}
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 transition-colors min-h-[44px]"
+                title={authState.user?.name}
+                aria-label={`${t('auth.account')}: ${authState.user?.name}`}
+                aria-expanded={userMenuOpen}
+                aria-haspopup="true"
+              >
+                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                  <User size={18} className="text-primary-700 dark:text-primary-300" />
+                </div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden lg:inline">
+                  {authState.user?.name}
+                </span>
+              </button>
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                  {/* User Info */}
+                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {authState.user?.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {authState.user?.email}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                      {t('auth.role')}: {authState.user?.role === 'admin' ? t('auth.admin') : authState.user?.role === 'user' ? t('auth.user') : t('auth.viewer')}
+                    </p>
+                  </div>
+                  {/* Menu Items */}
+                  <button
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      dispatch({ type: 'SET_ACTIVE_VIEW', payload: 'settings' });
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors min-h-[44px] flex items-center gap-3 text-gray-700 dark:text-gray-300"
+                    role="menuitem"
+                  >
+                    <UserCircle size={18} />
+                    {t('auth.myProfile')}
+                  </button>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors min-h-[44px] flex items-center gap-3 text-red-600 dark:text-red-400"
+                    role="menuitem"
+                  >
+                    <LogOut size={18} />
+                    {t('auth.logout')}
                   </button>
                 </div>
               )}

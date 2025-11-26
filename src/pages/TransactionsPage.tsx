@@ -68,7 +68,7 @@ const TransactionsPage = React.memo(function TransactionsPage() {
         message: t('transactions.addForm.successMessage')
       }
     });
-  };
+  }, [formData, state.posDevices, dispatch, t]);
 
   // Filtrelenmiş işlemler
   const filteredTransactions = transactions.filter(txn => {
@@ -359,4 +359,6 @@ const TransactionsPage = React.memo(function TransactionsPage() {
       )}
     </div>
   );
-}
+});
+
+export default TransactionsPage;

@@ -2,6 +2,37 @@
 // BANKA POS MUTABAKAT SİSTEMİ - TİP TANIMLAMALARI
 // ===========================================
 
+// Kullanıcı Bilgileri
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: 'admin' | 'user' | 'viewer';
+  avatar?: string;
+  createdAt: Date;
+  lastLogin?: Date;
+}
+
+// Auth State
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
+// Login Credentials
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+// Register Data
+export interface RegisterData {
+  email: string;
+  password: string;
+  name: string;
+}
+
 // Banka Bilgileri
 export interface Bank {
   id: string;
