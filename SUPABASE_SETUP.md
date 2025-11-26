@@ -28,6 +28,9 @@ Bu rehber POSum projesini Supabase ile entegre etmek için gerekli adımları a�
 
 3. Proje kök dizininde `.env` dosyası oluştur:
 
+https://apgsgnudjczctrzsotbi.supabase.co
+
+
 ```bash
 cp .env.example .env
 ```
@@ -176,6 +179,27 @@ supabase
 - RLS policies'leri kontrol edin
 - Kullanıcının doğru yetkilere sahip olduğundan emin olun
 
+### Loading ekranında takılı kalma / "User already registered" hatası
+Eğer login/register sırasında sorun yaşıyorsanız:
+
+1. **Browser Console**'u açın (F12)
+2. Console'da şunu çalıştırın:
+   ```javascript
+   localStorage.clear(); sessionStorage.clear(); location.reload();
+   ```
+3. Sayfayı yenileyin ve tekrar deneyin
+
+Bu sorun genellikle:
+- Profili olmayan auth kullanıcılarından kaynaklanır
+- Önceki başarısız kayıt denemelerinden kalan session'lardan kaynaklanır
+
+### Orphaned Users (Profili olmayan kullanıcılar)
+Eğer `auth.users` tablosunda kullanıcı var ama `public.users` tablosunda profil yoksa:
+
+1. Supabase SQL Editor'da `supabase/cleanup-orphaned-users.sql` dosyasını çalıştırın
+2. Önce preview query'sini çalıştırarak hangi kullanıcıların etkileneceğini görün
+3. Sonra silmek veya profil oluşturmak için ilgili SQL'i uncomment edin
+
 ### Email gönderilmiyor
 - **Authentication** > **Email Templates** kontrol edin
 - SMTP ayarlarını yapılandırın (production için)
@@ -191,3 +215,4 @@ supabase
 Sorularınız için:
 - [GitHub Issues](https://github.com/yourusername/posum/issues)
 - [Supabase Discord](https://discord.supabase.com)
+

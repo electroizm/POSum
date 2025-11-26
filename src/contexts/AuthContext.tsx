@@ -92,15 +92,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Use Supabase session
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          await supabase.auth.signOut();
+          setAuthState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false
+          });
+          return;
+        }
 
         if (session?.user) {
           // Fetch user profile from database
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('users')
             .select('*')
             .eq('id', session.user.id)
             .single();
+
+          if (profileError) {
+            console.error('Profile fetch error:', profileError);
+            // Profile not found, sign out and clear session
+            await supabase.auth.signOut();
+            setAuthState({
+              user: null,
+              isAuthenticated: false,
+              isLoading: false
+            });
+            return;
+          }
 
           if (profile) {
             const user: User = {
@@ -119,6 +142,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               isLoading: false
             });
           } else {
+            // No profile, sign out
+            await supabase.auth.signOut();
             setAuthState({
               user: null,
               isAuthenticated: false,
@@ -134,6 +159,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         console.error('Session check error:', error);
+        // Clear session on error
+        await supabase.auth.signOut();
         setAuthState({
           user: null,
           isAuthenticated: false,
@@ -148,7 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isSupabaseConfigured()) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('users')
             .select('*')
             .eq('id', session.user.id)
@@ -168,6 +195,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setAuthState({
               user,
               isAuthenticated: true,
+              isLoading: false
+            });
+          } else if (profileError) {
+            // Profile doesn't exist, sign out orphaned user
+            console.error('Profile not found during auth state change:', profileError);
+            await supabase.auth.signOut();
+            setAuthState({
+              user: null,
+              isAuthenticated: false,
               isLoading: false
             });
           }
@@ -309,6 +345,81 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (authError) {
+      // Check if user already exists in auth.users
+      if (authError.message.toLowerCase().includes('already registered') ||
+          authError.message.toLowerCase().includes('already exists')) {
+        // Try to sign in and check if profile exists
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password
+        });
+
+        if (signInError) {
+          throw new Error('This email is already registered. Please login instead or use password reset if you forgot your password.');
+        }
+
+        if (signInData.user) {
+          // Check if profile exists
+          const { data: existingProfile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', signInData.user.id)
+            .single();
+
+          if (existingProfile) {
+            // Profile exists, complete login
+            const user: User = {
+              id: existingProfile.id,
+              email: existingProfile.email,
+              name: existingProfile.name,
+              role: existingProfile.role,
+              avatar: existingProfile.avatar || undefined,
+              createdAt: new Date(existingProfile.created_at),
+              lastLogin: new Date()
+            };
+
+            setAuthState({
+              user,
+              isAuthenticated: true,
+              isLoading: false
+            });
+            return;
+          } else {
+            // Profile doesn't exist, create it
+            const { data: newProfile } = await supabase
+              .from('users')
+              .insert({
+                id: signInData.user.id,
+                email: data.email,
+                name: data.name,
+                role: 'user',
+                created_at: new Date().toISOString(),
+                last_login: new Date().toISOString()
+              })
+              .select()
+              .single();
+
+            if (newProfile) {
+              const user: User = {
+                id: newProfile.id,
+                email: newProfile.email,
+                name: newProfile.name,
+                role: newProfile.role,
+                avatar: newProfile.avatar || undefined,
+                createdAt: new Date(newProfile.created_at),
+                lastLogin: new Date()
+              };
+
+              setAuthState({
+                user,
+                isAuthenticated: true,
+                isLoading: false
+              });
+              return;
+            }
+          }
+        }
+      }
       throw new Error(authError.message);
     }
 
@@ -316,8 +427,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error('Registration failed');
     }
 
-    // Create user profile in database
-    const { error: profileError } = await supabase
+    // Check if profile already exists (for existing auth users without profile)
+    const { data: checkProfile } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authData.user.id)
+      .single();
+
+    if (checkProfile) {
+      // Profile already exists, use it
+      const user: User = {
+        id: checkProfile.id,
+        email: checkProfile.email,
+        name: checkProfile.name,
+        role: checkProfile.role,
+        avatar: checkProfile.avatar || undefined,
+        createdAt: new Date(checkProfile.created_at),
+        lastLogin: new Date()
+      };
+
+      setAuthState({
+        user,
+        isAuthenticated: true,
+        isLoading: false
+      });
+      return;
+    }
+
+    // Create user profile manually with RLS policy
+    const { data: insertData, error: insertError } = await supabase
       .from('users')
       .insert({
         id: authData.user.id,
@@ -326,19 +464,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: 'user',
         created_at: new Date().toISOString(),
         last_login: new Date().toISOString()
-      });
+      })
+      .select()
+      .single();
 
-    if (profileError) {
-      throw new Error(profileError.message);
+    if (insertError) {
+      console.error('Insert profile error:', insertError);
+
+      // If insert fails, try to fetch existing profile one more time
+      const { data: existingProfile, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authData.user.id)
+        .single();
+
+      if (fetchError) {
+        console.error('Fetch existing profile error:', fetchError);
+        await supabase.auth.signOut();
+        throw new Error('Registration failed. Please try again or contact support.');
+      }
+
+      if (existingProfile) {
+        const newUser: User = {
+          id: existingProfile.id,
+          email: existingProfile.email,
+          name: existingProfile.name,
+          role: existingProfile.role,
+          createdAt: new Date(existingProfile.created_at),
+          lastLogin: existingProfile.last_login ? new Date(existingProfile.last_login) : undefined
+        };
+
+        setAuthState({
+          user: newUser,
+          isAuthenticated: true,
+          isLoading: false
+        });
+        return;
+      }
+
+      await supabase.auth.signOut();
+      throw new Error('Registration failed. Please try again.');
     }
 
-    const newUser: User = {
+    // Use inserted data if available, otherwise create from input
+    const profileData = insertData || {
       id: authData.user.id,
       email: data.email,
       name: data.name,
       role: 'user',
-      createdAt: new Date(),
-      lastLogin: new Date()
+      created_at: new Date().toISOString(),
+      last_login: new Date().toISOString()
+    };
+
+    const newUser: User = {
+      id: profileData.id,
+      email: profileData.email,
+      name: profileData.name,
+      role: profileData.role as 'user' | 'admin' | 'viewer',
+      createdAt: new Date(profileData.created_at),
+      lastLogin: profileData.last_login ? new Date(profileData.last_login) : undefined
     };
 
     setAuthState({
