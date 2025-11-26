@@ -229,6 +229,29 @@
     "user": "Kullanıcı",
     "viewer": "Görüntüleyici",
     "memberSince": "Üyelik Tarihi",
-    "lastLogin": "Son Giriş"
+    "lastLogin": "Son Giriş",
+    "errors": {
+      "userAlreadyRegistered": "Bu e-posta zaten kayıtlı. Lütfen giriş yapın veya şifrenizi unuttuysanız şifre sıfırlamayı kullanın.",
+      "registrationFailed": "Kayıt başarısız oldu. Lütfen tekrar deneyin.",
+      "registrationIncomplete": "Kayıt tamamlanamadı. Lütfen farklı bir e-posta ile deneyin veya destek ile iletişime geçin.",
+      "invalidCredentials": "Geçersiz e-posta veya şifre",
+      "sessionError": "Oturum hatası oluştu",
+      "profileNotFound": "Kullanıcı profili bulunamadı",
+      "generic": "Bir hata oluştu. Lütfen tekrar deneyin."
+    },
+    "forgotPasswordTitle": "Şifrenizi mi Unuttunuz?",
+    "forgotPasswordSubtitle": "E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim",
+    "sendResetLink": "Sıfırlama Bağlantısı Gönder",
+    "sendingResetLink": "Gönderiliyor...",
+    "backToLogin": "Giriş sayfasına dön",
+    "resetLinkSent": "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi",
+    "checkYourEmail": "E-postanızı kontrol edin",
+    "resetPassword": "Şifreyi Sıfırla",
+    "resetPasswordSubtitle": "Yeni şifrenizi girin",
+    "newPassword": "Yeni Şifre",
+    "confirmNewPassword": "Yeni Şifre Tekrar",
+    "updatePassword": "Şifreyi Güncelle",
+    "updatingPassword": "Güncelleniyor...",
+    "passwordUpdated": "Şifreniz başarıyla güncellendi"
   }
 }

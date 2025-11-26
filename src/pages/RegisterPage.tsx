@@ -3,16 +3,13 @@
 // ===========================================
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, Eye, EyeOff, UserPlus, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { RegisterData } from '../types';
 
-interface RegisterPageProps {
-  onLoginClick: () => void;
-}
-
-export default function RegisterPage({ onLoginClick }: RegisterPageProps) {
+export default function RegisterPage() {
   const { t } = useTranslation();
   const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +51,10 @@ export default function RegisterPage({ onLoginClick }: RegisterPageProps) {
       await register(registerData);
       // Navigation will happen automatically via App.tsx checking auth state
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
+      const errorMessage = err instanceof Error ? err.message : 'auth.errors.registrationFailed';
+      // Check if error message is a translation key
+      const translatedError = errorMessage.startsWith('auth.') ? t(errorMessage) : errorMessage;
+      setError(translatedError);
     } finally {
       setIsLoading(false);
     }
@@ -248,14 +248,12 @@ export default function RegisterPage({ onLoginClick }: RegisterPageProps) {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {t('auth.haveAccount')}{' '}
-              <button
-                type="button"
-                onClick={onLoginClick}
-                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-                disabled={isLoading}
+              <Link
+                to="/login"
+                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
               >
                 {t('auth.login')}
-              </button>
+              </Link>
             </p>
           </div>
         </div>

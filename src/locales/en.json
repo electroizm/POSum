@@ -229,6 +229,29 @@
     "user": "User",
     "viewer": "Viewer",
     "memberSince": "Member Since",
-    "lastLogin": "Last Login"
+    "lastLogin": "Last Login",
+    "errors": {
+      "userAlreadyRegistered": "This email is already registered. Please login instead or use password reset if you forgot your password.",
+      "registrationFailed": "Registration failed. Please try again.",
+      "registrationIncomplete": "Registration incomplete. Please try again with a different email or contact support.",
+      "invalidCredentials": "Invalid email or password",
+      "sessionError": "Session error occurred",
+      "profileNotFound": "User profile not found",
+      "generic": "An error occurred. Please try again."
+    },
+    "forgotPasswordTitle": "Forgot Your Password?",
+    "forgotPasswordSubtitle": "Enter your email address and we'll send you a password reset link",
+    "sendResetLink": "Send Reset Link",
+    "sendingResetLink": "Sending...",
+    "backToLogin": "Back to login",
+    "resetLinkSent": "Password reset link has been sent to your email",
+    "checkYourEmail": "Check your email",
+    "resetPassword": "Reset Password",
+    "resetPasswordSubtitle": "Enter your new password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "updatingPassword": "Updating...",
+    "passwordUpdated": "Your password has been updated successfully"
   }
 }

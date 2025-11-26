@@ -355,7 +355,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
 
         if (signInError) {
-          throw new Error('This email is already registered. Please login instead or use password reset if you forgot your password.');
+          throw new Error('auth.errors.userAlreadyRegistered');
         }
 
         if (signInData.user) {
@@ -481,7 +481,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (fetchError) {
         console.error('Fetch existing profile error:', fetchError);
         await supabase.auth.signOut();
-        throw new Error('Registration failed. Please try again or contact support.');
+        throw new Error('auth.errors.registrationIncomplete');
       }
 
       if (existingProfile) {
@@ -503,7 +503,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       await supabase.auth.signOut();
-      throw new Error('Registration failed. Please try again.');
+      throw new Error('auth.errors.registrationFailed');
     }
 
     // Use inserted data if available, otherwise create from input

@@ -3,16 +3,13 @@
 // ===========================================
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, Eye, EyeOff, LogIn } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginCredentials } from '../types';
 
-interface LoginPageProps {
-  onRegisterClick: () => void;
-}
-
-export default function LoginPage({ onRegisterClick }: LoginPageProps) {
+export default function LoginPage() {
   const { t } = useTranslation();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +30,10 @@ export default function LoginPage({ onRegisterClick }: LoginPageProps) {
       await login(credentials);
       // Navigation will happen automatically via App.tsx checking auth state
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      const errorMessage = err instanceof Error ? err.message : 'auth.errors.invalidCredentials';
+      // Check if error message is a translation key
+      const translatedError = errorMessage.startsWith('auth.') ? t(errorMessage) : errorMessage;
+      setError(translatedError);
     } finally {
       setIsLoading(false);
     }
@@ -57,16 +57,6 @@ export default function LoginPage({ onRegisterClick }: LoginPageProps) {
 
         {/* Login Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
-          {/* Demo Credentials Info */}
-          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
-              {t('auth.demoCredentials')}
-            </p>
-            <div className="space-y-1 text-xs text-blue-700 dark:text-blue-400">
-              <p><strong>Admin:</strong> admin@posum.com / admin123</p>
-              <p><strong>User:</strong> user@posum.com / user123</p>
-            </div>
-          </div>
 
           {/* Error Message */}
           {error && (
@@ -143,13 +133,12 @@ export default function LoginPage({ onRegisterClick }: LoginPageProps) {
                   {t('auth.rememberMe')}
                 </span>
               </label>
-              <button
-                type="button"
-                className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
-                disabled={isLoading}
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
               >
                 {t('auth.forgotPassword')}
-              </button>
+              </Link>
             </div>
 
             {/* Login Button */}
@@ -188,14 +177,12 @@ export default function LoginPage({ onRegisterClick }: LoginPageProps) {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {t('auth.noAccount')}{' '}
-              <button
-                type="button"
-                onClick={onRegisterClick}
-                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-                disabled={isLoading}
+              <Link
+                to="/register"
+                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
               >
                 {t('auth.register')}
-              </button>
+              </Link>
             </p>
           </div>
         </div>
