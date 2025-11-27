@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'POSum - POS Mutabakat Sistemi',
+        name: 'POSum - POS Uyum Merkezi',
         short_name: 'POSum',
         description: 'Banka POS İşlem Takip ve Maliyet Yönetimi Sistemi',
         theme_color: '#3b82f6',

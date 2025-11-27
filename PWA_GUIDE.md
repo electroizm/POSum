@@ -41,7 +41,7 @@
 ### ✅ 3. PWA (Progressive Web App) Yapılandırması
 
 #### A. Manifest Dosyası
-- **App Name**: POSum - POS Mutabakat Sistemi
+- **App Name**: POSum - POS Uyum Merkezi
 - **Display Mode**: Standalone (tam ekran uygulama gibi)
 - **Theme Color**: #3b82f6 (Primary Blue)
 - **Orientation**: Portrait (dikey)

@@ -26,7 +26,7 @@
     "settings": "Ayarlar"
   },
   "header": {
-    "title": "POS Mutabakat Sistemi",
+    "title": "POS Uyum Merkezi",
     "subtitle": "Banka POS İşlem Takip ve Maliyet Yönetimi"
   },
   "sidebar": {
@@ -186,7 +186,7 @@
   },
   "auth": {
     "welcome": "Hoş Geldiniz",
-    "loginSubtitle": "POS Mutabakat Sistemi'ne giriş yapın",
+    "loginSubtitle": "POS Uyum Merkezi'ne giriş yapın",
     "registerSubtitle": "Hesabınızı oluşturun ve başlayın",
     "email": "E-posta",
     "emailPlaceholder": "ornek@firma.com",
@@ -260,7 +260,7 @@
     "termsOfServiceContent": {
       "title": "Kullanım Koşulları",
       "lastUpdated": "Son Güncellenme: 27 Kasım 2025",
-      "introduction": "POSum POS Mutabakat Sistemi'ni kullanarak aşağıdaki kullanım koşullarını kabul etmiş olursunuz. Lütfen hizmetimizi kullanmadan önce bu koşulları dikkatlice okuyunuz.",
+      "introduction": "POSum POS Uyum Merkezi'ni kullanarak aşağıdaki kullanım koşullarını kabul etmiş olursunuz. Lütfen hizmetimizi kullanmadan önce bu koşulları dikkatlice okuyunuz.",
       "section1": {
         "title": "1. Hizmet Tanımı",
         "content": "POSum, işletmenizin POS cihazları üzerinden gerçekleştirdiği finansal işlemleri takip etmenize, banka komisyonlarını hesaplamanıza ve mutabakat işlemlerinizi yönetmenize olanak sağlayan bir yazılım hizmetidir. Hizmetimiz; işlem takibi, komisyon hesaplama, raporlama ve simülasyon araçları sunmaktadır."
@@ -300,7 +300,7 @@
       "introduction": "POSum olarak, kişisel verilerinizin gizliliğine önem veriyoruz. Bu politika, topladığımız verileri, kullanım şeklimizi ve haklarınızı açıklamaktadır. 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamındaki tüm yükümlülüklerimizi yerine getiriyoruz.",
       "section1": {
         "title": "1. Veri Sorumlusu",
-        "content": "POSum POS Mutabakat Sistemi olarak kişisel verilerinizin işlenmesinden sorumlu veri sorumlusuyuz. İletişim bilgilerimiz: support@posum.com"
+        "content": "POSum POS Uyum Merkezi olarak kişisel verilerinizin işlenmesinden sorumlu veri sorumlusuyuz. İletişim bilgilerimiz: support@posum.com"
       },
       "section2": {
         "title": "2. Toplanan Kişisel Veriler",

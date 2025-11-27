@@ -1,4 +1,4 @@
-# 💳 POSum - POS Mutabakat Sistemi
+# 💳 POSum - POS Uyum Merkezi
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/electroizm/POSum)
 [![Live Demo](https://img.shields.io/badge/demo-live-success)](https://posum.vercel.app)

@@ -26,7 +26,7 @@
     "settings": "Settings"
   },
   "header": {
-    "title": "POS Reconciliation System",
+    "title": "POS Compliance Center",
     "subtitle": "Bank POS Transaction Tracking and Cost Management"
   },
   "sidebar": {
@@ -186,7 +186,7 @@
   },
   "auth": {
     "welcome": "Welcome",
-    "loginSubtitle": "Sign in to POS Reconciliation System",
+    "loginSubtitle": "Sign in to POS Compliance Center",
     "registerSubtitle": "Create your account and get started",
     "email": "Email",
     "emailPlaceholder": "example@company.com",
@@ -260,7 +260,7 @@
     "termsOfServiceContent": {
       "title": "Terms of Service",
       "lastUpdated": "Last Updated: November 27, 2025",
-      "introduction": "By using the POSum POS Reconciliation System, you agree to the following terms of service. Please read these terms carefully before using our service.",
+      "introduction": "By using the POSum POS Compliance Center, you agree to the following terms of service. Please read these terms carefully before using our service.",
       "section1": {
         "title": "1. Service Description",
         "content": "POSum is a software service that enables your business to track financial transactions conducted through POS devices, calculate bank commissions, and manage reconciliation processes. Our service provides transaction tracking, commission calculation, reporting, and simulation tools."
@@ -300,7 +300,7 @@
       "introduction": "At POSum, we value the privacy of your personal data. This policy explains the data we collect, how we use it, and your rights. We fulfill all our obligations under Law No. 6698 on the Protection of Personal Data (KVKK).",
       "section1": {
         "title": "1. Data Controller",
-        "content": "As POSum POS Reconciliation System, we are the data controller responsible for processing your personal data. Our contact information: support@posum.com"
+        "content": "As POSum POS Compliance Center, we are the data controller responsible for processing your personal data. Our contact information: support@posum.com"
       },
       "section2": {
         "title": "2. Personal Data Collected",
